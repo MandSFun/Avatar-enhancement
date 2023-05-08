@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Text;
 using TMPro;
@@ -19,16 +20,16 @@ public class testingNetworkManager : NetworkBehaviour
     private static Dictionary<ulong, PlayerData> clientData;//Dictionary to store 
     private bool isServerStarted = false;
 
+    //aries agent url
+    public string agentUrl = "http://localhost:8021";
+    public string registrationEndpoint = "/register";
+
 
    // Start is called before the first frame update
     private void Start()
     {
-    NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
-     NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
-
-    
-
-
+        NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
+        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
     }
     private void Destroy()
     {
@@ -67,13 +68,47 @@ public class testingNetworkManager : NetworkBehaviour
     public void Host()
     {   //Instantiate dictornary 'clientData' for Id->PlayerData;
         
-    //     clientData = new Dictionary<ulong, PlayerData>();
+        // clientData = new Dictionary<ulong, PlayerData>();
     //     clientData[NetworkManager.Singleton.LocalClientId] = new PlayerData(nameInputField.text);
       
     //    //NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+        
+        //create dictionary for player data
+        Dictionary<string, string> registrationData = new Dictionary<string, string>()
+            {
+                { "name", nameInputField.text },
+                // { "email", emailInput.text },
+                { "password", passwordInputField.text }
+            };
+
+        string jsonData = JsonUtility.ToJson(registrationData);
+        // Construct the URL for the registration endpoint
+        string url = agentUrl + registrationEndpoint;
+
+        // Send the registration data to ACA-Py agent via HTTP request
+        StartCoroutine(SendRegistrationRequest(url, jsonData));
+
         NetworkManager.Singleton.StartHost();
         //setPassword(passwordInputField.text);
          
+    }
+
+    IEnumerator SendRegistrationRequest(string url, string jsonData)
+    {
+        UnityWebRequest request = UnityWebRequest.Post(url, jsonData);
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Registration successful!");
+            Debug.Log(request.downloadHandler.text);
+        }
+        else
+        {
+            Debug.LogError("Registration failed: " + request.error);
+        }
     }
 
     // '?' allows null return for un-nullable;
@@ -87,6 +122,8 @@ public class testingNetworkManager : NetworkBehaviour
 
     //     return null;
     // }
+
+    
 
     private void HandleClientDisconnect(ulong clientId)
     {
