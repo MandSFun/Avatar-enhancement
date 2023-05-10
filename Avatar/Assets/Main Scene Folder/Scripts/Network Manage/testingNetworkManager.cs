@@ -1,12 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine.Networking;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Text;
 using TMPro;
+using Newtonsoft.Json;
+
+[System.Serializable]
+public class JsonData
+{
+    public string did;
+    public string seed;
+    public string verkey;
+}
+
 public class testingNetworkManager : NetworkBehaviour
 { 
     [SerializeField] private TMP_InputField passwordInputField;
@@ -119,24 +130,6 @@ public class testingNetworkManager : NetworkBehaviour
         // NetworkManager.Singleton.StartHost();
         //setPassword(passwordInputField.text);
          
-    }
-
-    IEnumerator SendRegistrationRequest(string url, string jsonData)
-    {
-        UnityWebRequest request = UnityWebRequest.Post(url, jsonData);
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log("Registration successful!");
-            Debug.Log(request.downloadHandler.text);
-        }
-        else
-        {
-            Debug.LogError("Registration failed: " + request.error);
-        }
     }
 
     // '?' allows null return for un-nullable;
