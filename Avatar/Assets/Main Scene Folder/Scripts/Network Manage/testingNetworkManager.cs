@@ -21,16 +21,27 @@ public class testingNetworkManager : NetworkBehaviour
     private bool isServerStarted = false;
 
     //aries agent url
-    public string agentUrl = "http://localhost:8021";
+    public string agentUrl = "localhost:8000";
     public string registrationEndpoint = "/register";
 
 
    // Start is called before the first frame update
     private void Start()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
-        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
+        Debug.Log("Starting...");
+        Debug.Log("Name:" + nameInputField.text);
+        // nameInputField.onValueChanged.AddListener(HandleInputValueChanged);
+        // passwordInputField.onValueChanged.AddListener(HandleInputValueChanged);
+        // NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
+        // NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
     }
+
+    private void HandleInputValueChanged(string value)
+    {
+        // Handle the input field value change here
+        Debug.Log("Input Field Value Changed: " + value);
+    }
+
     private void Destroy()
     {
         if (NetworkManager.Singleton == null) { return; }
@@ -74,13 +85,30 @@ public class testingNetworkManager : NetworkBehaviour
     //    //NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
         
         //create dictionary for player data
+        Debug.Log("Pressing Button");
+        string name = nameInputField.text;
+        string password = passwordInputField.text;
+        // if( nameInputField.text != null){
+        //     Debug.Log("The name is" + name);
+        // }
+        // else{
+        //     Debug.Log("The name is null");
+        // }
+        // if( nameInputField.text != null){
+        //     Debug.Log("The pw is" + password);
+        // }
+        // else{
+        //     Debug.Log("The pw is null");
+        // }
+        Debug.Log("The name is "+ name);
+        Debug.Log("The pw is "+ password);
         Dictionary<string, string> registrationData = new Dictionary<string, string>()
-            {
-                { "name", nameInputField.text },
-                // { "email", emailInput.text },
-                { "password", passwordInputField.text }
-            };
-
+        {
+            { "name", nameInputField.text },
+            // { "email", emailInput.text },
+            { "password", passwordInputField.text }
+        };
+        
         string jsonData = JsonUtility.ToJson(registrationData);
         // Construct the URL for the registration endpoint
         string url = agentUrl + registrationEndpoint;
@@ -88,7 +116,7 @@ public class testingNetworkManager : NetworkBehaviour
         // Send the registration data to ACA-Py agent via HTTP request
         StartCoroutine(SendRegistrationRequest(url, jsonData));
 
-        NetworkManager.Singleton.StartHost();
+        // NetworkManager.Singleton.StartHost();
         //setPassword(passwordInputField.text);
          
     }
