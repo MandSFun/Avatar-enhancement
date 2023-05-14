@@ -126,6 +126,8 @@ public class testingNetworkManager : NetworkBehaviour
 
         // Send the registration data to ACA-Py agent via HTTP request
         StartCoroutine(SendRegistrationRequest(url, jsonData));
+        Loader.Load(Loader.Scene.Main);
+    }
 
         // NetworkManager.Singleton.StartHost();
         //setPassword(passwordInputField.text);
