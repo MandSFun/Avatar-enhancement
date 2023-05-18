@@ -37,22 +37,15 @@ public class testingNetworkManager : NetworkBehaviour
 
 
    // Start is called before the first frame update
-    private void Start()
-    {
-        Debug.Log("Starting...");
-        Debug.Log("Name:" + nameInputField.text);
-        // nameInputField.onValueChanged.AddListener(HandleInputValueChanged);
-        // passwordInputField.onValueChanged.AddListener(HandleInputValueChanged);
-        // NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
-        // NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
-    }
+    // private void Start()
+    // {
+    // NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
+    //  NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
 
-    private void HandleInputValueChanged(string value)
-    {
-        // Handle the input field value change here
-        Debug.Log("Input Field Value Changed: " + value);
-    }
+    
 
+
+    // }
     private void Destroy()
     {
         if (NetworkManager.Singleton == null) { return; }
@@ -87,40 +80,33 @@ public class testingNetworkManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
 
     }
-    public void Host()
-    {   //Instantiate dictornary 'clientData' for Id->PlayerData;
-        
-        // clientData = new Dictionary<ulong, PlayerData>();
-    //     clientData[NetworkManager.Singleton.LocalClientId] = new PlayerData(nameInputField.text);
-      
-    //    //NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-        
-        //create dictionary for player data
-        Debug.Log("Pressing Button");
-        string name = nameInputField.text;
-        string password = passwordInputField.text;
-        // if( nameInputField.text != null){
-        //     Debug.Log("The name is" + name);
-        // }
-        // else{
-        //     Debug.Log("The name is null");
-        // }
-        // if( nameInputField.text != null){
-        //     Debug.Log("The pw is" + password);
-        // }
-        // else{
-        //     Debug.Log("The pw is null");
-        // }
-        Debug.Log("The name is "+ name);
-        Debug.Log("The pw is "+ password);
-        Dictionary<string, string> registrationData = new Dictionary<string, string>()
+
+    public void Register(){
+
+        //TODO: Add check that name is not already on the blockchain        
+
+        //Format Name into wallet seed which is 32 characters
+        int numZero = 32 - nameInputField.text.Length - 1;
+        string seed = nameInputField.text;
+        for (int i = 0; i < numZero; i++) 
         {
-            { "name", nameInputField.text },
-            // { "email", emailInput.text },
-            { "password", passwordInputField.text }
-        };
-        
-        string jsonData = JsonUtility.ToJson(registrationData);
+            seed = seed + "0";
+        }
+        seed = seed + "1";
+
+        //register the DID based on the seed value using the von-network webserver
+        Dictionary<string, string> registrationData = new Dictionary<string, string>();
+        registrationData.Add("seed", seed);
+        registrationData.Add("role", "TRUST_ANCHOR");
+        registrationData.Add("alias", nameInputField.text);
+        // {
+        //     { "seed", seed },
+        //     { "role", "TRUST_ANCHOR" },
+        //     { "alias", nameInputField.text }
+        // };
+
+        string jsonData = JsonConvert.SerializeObject(registrationData);
+
         // Construct the URL for the registration endpoint
         string url = agentUrl + registrationEndpoint;
 
@@ -129,9 +115,38 @@ public class testingNetworkManager : NetworkBehaviour
         Loader.Load(Loader.Scene.Main);
     }
 
-        // NetworkManager.Singleton.StartHost();
-        //setPassword(passwordInputField.text);
-         
+    IEnumerator SendRegistrationRequest(string url, string jsonData)
+    {
+        var request = new UnityWebRequest(url, "POST");
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
+        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        // UnityWebRequest request = UnityWebRequest.Post(url, jsonData);
+        // request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+        Debug.Log(request.result);
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Registration successful!");
+            // Debug.Log(request.downloadHandler.text);
+            var response = JsonUtility.FromJson<JsonData>(request.downloadHandler.text);
+            
+            // string wallet_seed = request.downloadHandler.text["seed"];
+            // string verkey = request.downloadHandler.text["verkey"];
+            Debug.Log("DID: " + response.did);
+            
+            // Where to send messages that arrive destined for a given verkey 
+            Debug.Log("Verkey: " + response.verkey);
+            
+            Debug.Log("Seed: " + response.seed);
+        }
+        else
+        {
+            Debug.LogError("Registration failed: " + request.error);
+        }
     }
 
     // '?' allows null return for un-nullable;

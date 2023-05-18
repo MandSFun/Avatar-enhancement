@@ -9,7 +9,8 @@ public static class Loader
     public enum Scene {
         Main, 
         Name, 
-        Loading
+        Loading,
+        SplashScreen
     }
 
     public static Action onLoaderCallback;
@@ -25,6 +26,14 @@ public static class Loader
         //Load the loading screen
         SceneManager.LoadScene(Scene.Loading.ToString());
     }
+
+    // public static void LoadV2(Scene scene)
+    // {
+    //     //Set the loader callback action to laod the target scene
+    //     onLoaderCallback = () => {
+    //         SceneManager.LoadScene(scene.ToString());
+    //     };
+    // }
 
     public static void LoaderCallback(){
         // Triggered after first update which lets the scene refresh
