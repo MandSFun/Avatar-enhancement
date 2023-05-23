@@ -1,5 +1,6 @@
 using System.Text;
 using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -172,6 +173,48 @@ public class testingNetworkManager : NetworkBehaviour
         Environment.SetEnvironmentVariable("KEY1", "Value1");
         Environment.SetEnvironmentVariable("KEY2", "Value2");
         // Set more environment variables as needed
+    }
+
+    private void RunDockerBuild()
+    {
+        string dockerfilePath = "path/to/your/Dockerfile";
+        string imageName = "your-image-name";
+        string contextPath = "path/to/your/context";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = "docker",
+            Arguments = $"build -t {imageName} -f {dockerfilePath} {contextPath}",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        Process process = new Process();
+        process.StartInfo = startInfo;
+
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        process.WaitForExit();
     }
 
     // '?' allows null return for un-nullable;
