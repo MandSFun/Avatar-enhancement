@@ -1,3 +1,5 @@
+using System.Text;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -6,7 +8,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using System.Text;
 using TMPro;
 using Newtonsoft.Json;
 
@@ -85,9 +86,13 @@ public class testingNetworkManager : NetworkBehaviour
 
         //TODO: Add check that name is not already on the blockchain        
 
-        //Format Name into wallet seed which is 32 characters
+        //Get name and password from input fields
+        string name = nameInputField.text;
+        string password = passwordInputField.text;
+
+        //Format name into wallet seed which is 32 characters
         int numZero = 32 - nameInputField.text.Length - 1;
-        string seed = nameInputField.text;
+        string seed = name;
         for (int i = 0; i < numZero; i++) 
         {
             seed = seed + "0";
@@ -110,12 +115,15 @@ public class testingNetworkManager : NetworkBehaviour
         // Construct the URL for the registration endpoint
         string url = agentUrl + registrationEndpoint;
 
+        // Debug.Log(url);
         // Send the registration data to ACA-Py agent via HTTP request
-        StartCoroutine(SendRegistrationRequest(url, jsonData));
+        StartCoroutine(SendRegistrationRequest(url, jsonData, password));
+        
+        // Load Scene for choosing host/client
         Loader.Load(Loader.Scene.Main);
     }
 
-    IEnumerator SendRegistrationRequest(string url, string jsonData)
+    IEnumerator SendRegistrationRequest(string url, string jsonData, string password)
     {
         var request = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
@@ -147,6 +155,23 @@ public class testingNetworkManager : NetworkBehaviour
         {
             Debug.LogError("Registration failed: " + request.error);
         }
+    }
+
+    private void SetEnvironmentVariables()
+    {
+        // AGENT_WALLET_SEED=<some-seed>
+        // LABEL=issuer.ldej.nl
+        // ACAPY_ENDPOINT_PORT=8000
+        // ACAPY_ENDPOINT_URL=http://localhost:8000/
+        // ACAPY_ADMIN_PORT=11000
+        // LEDGER_URL=http://172.17.0.1:9000
+        // TAILS_SERVER_URL=http://tails-server:6543
+        // CONTROLLER_PORT=8080
+        // WALLET_NAME=issuer
+        // WALLET_KEY=<some-secret>
+        Environment.SetEnvironmentVariable("KEY1", "Value1");
+        Environment.SetEnvironmentVariable("KEY2", "Value2");
+        // Set more environment variables as needed
     }
 
     // '?' allows null return for un-nullable;
