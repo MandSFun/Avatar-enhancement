@@ -26,17 +26,10 @@ public class testingNetworkManager : NetworkBehaviour
     [SerializeField] private TMP_InputField nameInputField;
 
 
-    [SerializeField] private Button LeaveButton;
 
-    [SerializeField] private GameObject Holder;
 
-    private static Dictionary<ulong, PlayerData> clientData;//Dictionary to store 
-    private bool isServerStarted = false;
-
-    //aries agent url
-    public string agentUrl = "localhost:8000";
-    public string registrationEndpoint = "/register";
-
+    private string ledgerUrl = "http://localhost:9000";
+    private string registrationEndpoint = "/register";
 
    // Start is called before the first frame update
     // private void Start()
@@ -48,40 +41,6 @@ public class testingNetworkManager : NetworkBehaviour
 
 
     // }
-    private void Destroy()
-    {
-        if (NetworkManager.Singleton == null) { return; }
-       // NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnect;
-       // NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnect;
-    }
-    public void Leave()
-    {   NetworkManager.Singleton.Shutdown();
-        if (IsClient) NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
-        
-
-        if (NetworkManager.Singleton.IsServer)
-        {
-            NetworkManager.Singleton.ConnectionApprovalCallback -= ApprovalCheck;
-        } 
-        
-        Holder.SetActive(true);
-
-    }
-    public void Client()
-    
-    {   //Convert to byte array;
-        // var payload = JsonUtility.ToJson(new ConnectionPayload()
-        // {
-
-        //     NetworkPlayerName = nameInputField.text,
-        //     password = passwordInputField.text
-        // }); 
-
-        // byte[] payloadBytes = Encoding.ASCII.GetBytes(payload);
-        // NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
-        NetworkManager.Singleton.StartClient();
-
-    }
 
     public void Register(){
 
@@ -114,17 +73,15 @@ public class testingNetworkManager : NetworkBehaviour
         string jsonData = JsonConvert.SerializeObject(registrationData);
 
         // Construct the URL for the registration endpoint
-        string url = agentUrl + registrationEndpoint;
+        string url = ledgerUrl + registrationEndpoint;
 
         // Debug.Log(url);
         // Send the registration data to ACA-Py agent via HTTP request
-        StartCoroutine(SendRegistrationRequest(url, jsonData, password));
+        StartCoroutine(SendRegistrationRequest(url, jsonData, password, name));
         
-        // Load Scene for choosing host/client
-        Loader.Load(Loader.Scene.Main);
     }
 
-    IEnumerator SendRegistrationRequest(string url, string jsonData, string password)
+    IEnumerator SendRegistrationRequest(string url, string jsonData, string password, string name)
     {
         var request = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
@@ -135,22 +92,44 @@ public class testingNetworkManager : NetworkBehaviour
         // UnityWebRequest request = UnityWebRequest.Post(url, jsonData);
         // request.SetRequestHeader("Content-Type", "application/json");
 
-        yield return request.SendWebRequest();
-        UnityEngine.Debug.Log(request.result);
-        if (request.result == UnityWebRequest.Result.Success)
+        // yield return request.SendWebRequest();
+        UnityWebRequestAsyncOperation httpRequest = request.SendWebRequest();
+        while(!httpRequest.isDone){
+            // Load Scene for choosing host/client
+            // SceneManager.LoadScene(Loader.Scene.Loading.ToString());
+            UnityEngine.Debug.Log("Progress: " + httpRequest.progress);
+            yield return null;
+        }
+        
+        // yield return request.SendWebRequest();
+        UnityEngine.Debug.Log(httpRequest.webRequest.result);
+        if (httpRequest.webRequest.result == UnityWebRequest.Result.Success)
         {
             UnityEngine.Debug.Log("Registration successful!");
             // Debug.Log(request.downloadHandler.text);
-            var response = JsonUtility.FromJson<JsonData>(request.downloadHandler.text);
+            var response = JsonUtility.FromJson<JsonData>(httpRequest.webRequest.downloadHandler.text);
             
             // string wallet_seed = request.downloadHandler.text["seed"];
             // string verkey = request.downloadHandler.text["verkey"];
-            UnityEngine.Debug.Log("DID: " + response.did);
-            
+            // UnityEngine.Debug.Log("DID: " + response.did);
+
             // Where to send messages that arrive destined for a given verkey 
-            UnityEngine.Debug.Log("Verkey: " + response.verkey);
+            // UnityEngine.Debug.Log("Verkey: " + response.verkey);
+            // UnityEngine.Debug.Log("Seed: " + response.seed);
             
-            UnityEngine.Debug.Log("Seed: " + response.seed);
+            //add arguments
+            Dictionary<string, string> arguments = new Dictionary<string, string>();
+            arguments.Add("DID", response.did);
+            arguments.Add("Name", name);
+            arguments.Add("Verkey", response.verkey);
+            arguments.Add("Seed", response.seed);
+            arguments.Add("WalletSecret", password);
+            // UnityEngine.Debug.Log("Arguments: " + arguments);
+            
+            // Load Scene for choosing host/client
+            Loader.Load(Loader.Scene.Main);
+            StartAcaPyInstance(arguments);
+
         }
         else
         {
@@ -158,34 +137,14 @@ public class testingNetworkManager : NetworkBehaviour
         }
     }
 
-    private void SetEnvironmentVariables()
-    {
-        // AGENT_WALLET_SEED=<some-seed>
-        // LABEL=issuer.ldej.nl
-        // ACAPY_ENDPOINT_PORT=8000
-        // ACAPY_ENDPOINT_URL=http://localhost:8000/
-        // ACAPY_ADMIN_PORT=11000
-        // LEDGER_URL=http://172.17.0.1:9000
-        // TAILS_SERVER_URL=http://tails-server:6543
-        // CONTROLLER_PORT=8080
-        // WALLET_NAME=issuer
-        // WALLET_KEY=<some-secret>
-        Environment.SetEnvironmentVariable("KEY1", "Value1");
-        Environment.SetEnvironmentVariable("KEY2", "Value2");
-        
-        // Set more environment variables as needed
-    }
 
-    private void RunDockerBuild()
+    private void RunScriptInDirectory(string directoryPath, string scriptCommand, Dictionary<string, string> arguments)
     {
-        string dockerfilePath = "path/to/your/Dockerfile";
-        string imageName = "your-image-name";
-        string contextPath = "path/to/your/context";
-
         ProcessStartInfo startInfo = new ProcessStartInfo
         {
-            FileName = "docker",
-            Arguments = $"build -t {imageName} -f {dockerfilePath} {contextPath}",
+            WorkingDirectory = directoryPath,
+            FileName = "bash",
+            Arguments = $"-c \"{scriptCommand}\" --label {arguments["Name"]} -it http 0.0.0.0 8001 -ot http --admin 0.0.0.0 11001 --admin-insecure-mode --genesis-url http://host.docker.internal:9000/genesis --endpoint http://localhost:8001/ --seed {arguments["Seed"]} --debug-connections --auto-provision --wallet-type indy --wallet-name {arguments["Name"]} --wallet-key {arguments["WalletSecret"]}",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -212,10 +171,19 @@ public class testingNetworkManager : NetworkBehaviour
         };
 
         process.Start();
+        UnityEngine.Debug.Log("Running script now");
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
 
         process.WaitForExit();
+    }
+
+    private void StartAcaPyInstance(Dictionary<string, string> arguments)
+    {
+        string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
+        string scriptCommand = "./run_docker start";
+        UnityEngine.Debug.Log("Running script now");
+        // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
 
     // '?' allows null return for un-nullable;
@@ -229,74 +197,6 @@ public class testingNetworkManager : NetworkBehaviour
 
     //     return null;
     // }
-
-    
-
-    private void HandleClientDisconnect(ulong clientId)
-    {
-        // if (NetworkManager.Singleton.IsServer)
-        // {
-        //     clientData.Remove(clientId);
-        // }
-
-        // Are we the client that is disconnecting?
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
-            Holder.SetActive(true);
-            LeaveButton.gameObject.SetActive(false);
-
-
-        }
-    }
-    private void HandleClientConnect(ulong clientId)
-    {UnityEngine.Debug.Log($"ClientId {clientId} connected, LocalClientId is {NetworkManager.Singleton.LocalClientId}");
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
-            Holder.SetActive(false);
-            LeaveButton.gameObject.SetActive(true);
-            
-
-        }
-    }
-    public void setPassword(string password){
-        byte[] hashed = Encoding.ASCII.GetBytes(password);
-        NetworkManager.Singleton.NetworkConfig.ConnectionData = hashed;
-    }
-
-    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
-    {
-        // Get the password sent by the client
-        byte[] clienthash = request.Payload;
-        string payload = Encoding.ASCII.GetString(request.Payload);
-
-        var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);
-
-        byte[] hostHash = NetworkManager.Singleton.NetworkConfig.ConnectionData;
-
-    // Check if the hashes match
-    
-        bool approved = clienthash.Equals(hostHash);
-
-   
-        if (approved)
-        {
-            // Store their player data in the clientData dictionary
-            ulong clientId = request.ClientNetworkId;
-
-            clientData[clientId] = new PlayerData(connectionPayload.NetworkPlayerName);
-            response.Approved = true;
-            response.CreatePlayerObject = true;
-            // Position to spawn the player object   (if null it uses default of Vector3.zero)
-    
-        }
-        else
-        {
-            // If the client is not approved, reject the connection and provide a reason
-            response.Approved = false;
-            response.Reason = "Incorrect password.";
-        }
-        response.PlayerPrefabHash = null;
-    }
 
 
 }

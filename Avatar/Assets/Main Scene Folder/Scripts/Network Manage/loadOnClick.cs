@@ -12,7 +12,7 @@ public class loadOnClick : MonoBehaviour
 { 
     public GameObject blackOutSquare;
     public void Update(){
-        if(Input.GetKeyDown(KeyCode.Return)){
+        if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)){
             StartCoroutine(FadeBlackOutSquare());
         }
     }
