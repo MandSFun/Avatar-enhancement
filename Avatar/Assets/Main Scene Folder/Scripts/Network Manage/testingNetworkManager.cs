@@ -136,25 +136,25 @@ public class testingNetworkManager : NetworkBehaviour
         // request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-        Debug.Log(request.result);
+        UnityEngine.Debug.Log(request.result);
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("Registration successful!");
+            UnityEngine.Debug.Log("Registration successful!");
             // Debug.Log(request.downloadHandler.text);
             var response = JsonUtility.FromJson<JsonData>(request.downloadHandler.text);
             
             // string wallet_seed = request.downloadHandler.text["seed"];
             // string verkey = request.downloadHandler.text["verkey"];
-            Debug.Log("DID: " + response.did);
+            UnityEngine.Debug.Log("DID: " + response.did);
             
             // Where to send messages that arrive destined for a given verkey 
-            Debug.Log("Verkey: " + response.verkey);
+            UnityEngine.Debug.Log("Verkey: " + response.verkey);
             
-            Debug.Log("Seed: " + response.seed);
+            UnityEngine.Debug.Log("Seed: " + response.seed);
         }
         else
         {
-            Debug.LogError("Registration failed: " + request.error);
+            UnityEngine.Debug.LogError("Registration failed: " + request.error);
         }
     }
 
@@ -172,6 +172,7 @@ public class testingNetworkManager : NetworkBehaviour
         // WALLET_KEY=<some-secret>
         Environment.SetEnvironmentVariable("KEY1", "Value1");
         Environment.SetEnvironmentVariable("KEY2", "Value2");
+        
         // Set more environment variables as needed
     }
 
@@ -248,7 +249,7 @@ public class testingNetworkManager : NetworkBehaviour
         }
     }
     private void HandleClientConnect(ulong clientId)
-    {Debug.Log($"ClientId {clientId} connected, LocalClientId is {NetworkManager.Singleton.LocalClientId}");
+    {UnityEngine.Debug.Log($"ClientId {clientId} connected, LocalClientId is {NetworkManager.Singleton.LocalClientId}");
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             Holder.SetActive(false);
