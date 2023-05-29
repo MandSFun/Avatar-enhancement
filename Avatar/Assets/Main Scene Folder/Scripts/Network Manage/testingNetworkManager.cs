@@ -148,7 +148,7 @@ public class testingNetworkManager : NetworkBehaviour
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            // CreateNoWindow = true
         };
 
         Process process = new Process();
@@ -170,20 +170,23 @@ public class testingNetworkManager : NetworkBehaviour
             }
         };
 
+        // UnityEngine.Debug.Log("Running script now");
+
         process.Start();
         UnityEngine.Debug.Log("Running script now");
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-
-        process.WaitForExit();
+        UnityEngine.Debug.Log(process.StartInfo);
+        UnityEngine.Debug.Log("Process start time:" + process.StartTime);
+        // process.WaitForExit();
     }
 
     private void StartAcaPyInstance(Dictionary<string, string> arguments)
     {
         string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
         string scriptCommand = "./run_docker start";
-        UnityEngine.Debug.Log("Running script now");
-        // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
+        UnityEngine.Debug.Log("Starting ACA-PY instance now");
+        RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
 
     // '?' allows null return for un-nullable;
