@@ -74,14 +74,21 @@ public class testingNetworkManager : NetworkBehaviour
 
         //Get name and password from input fields
         string name = nameInputField.text;
+
+
         string password = passwordInputField.text;
         string role = dropDown.captionText.text;
 
         UnityEngine.Debug.Log("Role: " + role);
 
-        //Format name into wallet seed which is 32 characters
-        int numZero = 32 - nameInputField.text.Length - 1;
+        //format string to have no whitespace and to be all lowercase
         string seed = name;
+        string seedFormatted = seed.Replace(" ", "");
+        seed = seedFormatted.ToLower();
+
+        //Format name into wallet seed which is 32 characters
+        int numZero = 32 - seed.Length - 1;
+        
         for (int i = 0; i < numZero; i++) 
         {
             seed = seed + "0";
@@ -118,8 +125,7 @@ public class testingNetworkManager : NetworkBehaviour
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
-        // UnityWebRequest request = UnityWebRequest.Post(url, jsonData);
-        // request.SetRequestHeader("Content-Type", "application/json");
+        
 
         // yield return request.SendWebRequest();
         UnityWebRequestAsyncOperation httpRequest = request.SendWebRequest();
@@ -149,11 +155,12 @@ public class testingNetworkManager : NetworkBehaviour
             //add arguments
             Dictionary<string, string> arguments = new Dictionary<string, string>();
             arguments.Add("DID", response.did);
-            arguments.Add("Name", name);
+            arguments.Add("WALLET_NAME", name);
             arguments.Add("Verkey", response.verkey);
-            arguments.Add("Seed", response.seed);
-            arguments.Add("WalletSecret", password);
-            // UnityEngine.Debug.Log("Arguments: " + arguments);
+            arguments.Add("SEED", response.seed);
+            arguments.Add("WALLET_KEY", password);
+            UnityEngine.Debug.Log("DID: " + arguments["DID"]);
+            UnityEngine.Debug.Log("Verkey: " + arguments["Verkey"]);
             
             // Load Scene for choosing host/client
             Loader.Load(Loader.Scene.Main);
@@ -167,69 +174,111 @@ public class testingNetworkManager : NetworkBehaviour
     }
 
 
-    private void RunScriptInDirectory(string directoryPath, string scriptCommand, Dictionary<string, string> arguments)
+    // private void RunScriptInDirectory(string directoryPath, string scriptCommand, Dictionary<string, string> arguments)
+    // {
+    //     ProcessStartInfo startInfo = new ProcessStartInfo
+    //     {
+    //         WorkingDirectory = directoryPath,
+    //         FileName = "bash",
+    //         Arguments = $"-c \"{scriptCommand}\" --label {arguments["Name"]} -it http 0.0.0.0 8001 -ot http --admin 0.0.0.0 11001 --admin-insecure-mode --genesis-url http://host.docker.internal:9000/genesis --endpoint http://localhost:8001/ --seed {arguments["Seed"]} --debug-connections --auto-provision --wallet-type indy --wallet-name {arguments["Name"]} --wallet-key {arguments["WalletSecret"]}",
+    //         RedirectStandardOutput = true,
+    //         RedirectStandardError = true,
+    //         UseShellExecute = false,
+    //         WindowStyle =  ProcessWindowStyle.Minimized,
+    //         // CreateNoWindow = true
+    //     };
+
+    //     Process process = new Process();
+    //     process.StartInfo = startInfo;
+
+    //     process.OutputDataReceived += (sender, e) =>
+    //     {
+    //         if (!string.IsNullOrEmpty(e.Data))
+    //         {
+    //             Console.WriteLine(e.Data);
+    //         }
+    //     };
+
+    //     process.ErrorDataReceived += (sender, e) =>
+    //     {
+    //         if (!string.IsNullOrEmpty(e.Data))
+    //         {
+    //             Console.WriteLine(e.Data);
+    //         }
+    //     };
+
+    //     // UnityEngine.Debug.Log("Running script now");
+
+    //     process.Start();
+    //     UnityEngine.Debug.Log("Running script now");
+    //     process.BeginOutputReadLine();
+    //     process.BeginErrorReadLine();
+    //     UnityEngine.Debug.Log(process.StartInfo);
+    //     UnityEngine.Debug.Log("Process start time:" + process.StartTime);
+    //     // process.WaitForExit();
+    // }
+
+    public void RunDockerCompose(string composeFilePath, string[] additionalArgs = null)
     {
-        ProcessStartInfo startInfo = new ProcessStartInfo
-        {
-            WorkingDirectory = directoryPath,
-            FileName = "bash",
-            Arguments = $"-c \"{scriptCommand}\" --label {arguments["Name"]} -it http 0.0.0.0 8001 -ot http --admin 0.0.0.0 11001 --admin-insecure-mode --genesis-url http://host.docker.internal:9000/genesis --endpoint http://localhost:8001/ --seed {arguments["Seed"]} --debug-connections --auto-provision --wallet-type indy --wallet-name {arguments["Name"]} --wallet-key {arguments["WalletSecret"]}",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            WindowStyle =  ProcessWindowStyle.Minimized,
-            // CreateNoWindow = true
-        };
-
+        // Create a new process instance
         Process process = new Process();
-        process.StartInfo = startInfo;
 
-        process.OutputDataReceived += (sender, e) =>
+        try
         {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                Console.WriteLine(e.Data);
-            }
-        };
+            // Set the process start info
+            process.StartInfo.FileName = "docker-compose";
+            process.StartInfo.Arguments = $"-f {composeFilePath} up -d"; // Specify the compose file and command
 
-        process.ErrorDataReceived += (sender, e) =>
+            if (additionalArgs != null && additionalArgs.Length > 0)
+            {
+                string argsString = string.Join(" ", additionalArgs);
+                process.StartInfo.Arguments += $" {argsString}";
+            }
+
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            // Event handlers for capturing output
+            process.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+            process.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
+
+            // Start the process
+            process.Start();
+
+            // Begin capturing output
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            // Wait for the process to exit
+            process.WaitForExit();
+        }
+        catch (Exception ex)
         {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                Console.WriteLine(e.Data);
-            }
-        };
-
-        // UnityEngine.Debug.Log("Running script now");
-
-        process.Start();
-        UnityEngine.Debug.Log("Running script now");
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        UnityEngine.Debug.Log(process.StartInfo);
-        UnityEngine.Debug.Log("Process start time:" + process.StartTime);
-        // process.WaitForExit();
+            Console.WriteLine($"Error running docker-compose: {ex.Message}");
+        }
+        finally
+        {
+            // Cleanup resources
+            process.Close();
+            process.Dispose();
+        }
     }
 
     private void StartAcaPyInstance(Dictionary<string, string> arguments)
     {
-        string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
-        string scriptCommand = "./run_docker start";
+        // string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
+        // string scriptCommand = "./run_docker start";
+        string composeFilePath = "../Wallet/docker-compose.yml";
+        arguments.Add("ACAPY_ENDPOINT_PORT", "8002");
+        arguments.Add("ACAPY_ADMIN_PORT", "11002");
+        arguments.Add("CONTROLLER_PORT", "3000");
+        string[] additionalArgs = { $"--WALLET_KEY={arguments["WALLET_KEY"]}", $"--LABEL={arguments["WALLET_NAME"]}", $"--WALLET_NAME={arguments["WALLET_NAME"]}", $"--AGENT_WALLET_SEED={arguments["SEED"]}", $"--ACAPY_ENDPOINT_PORT={arguments["ACAPY_ENDPOINT_PORT"]}", $"--ACAPY_ADMIN_PORT={arguments["ACAPY_ADMIN_PORT"]}", $"--CONTROLLER_PORT={arguments["CONTROLLER_PORT"]}" };
+
         UnityEngine.Debug.Log("Starting ACA-PY instance now");
-        RunScriptInDirectory(directoryPath, scriptCommand, arguments);
+        RunDockerCompose(composeFilePath, additionalArgs);
+        // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
-
-    // '?' allows null return for un-nullable;
-    // public static PlayerData? GetPlayerData(ulong clientId)
-    // {   ////For name display;
-    //     ////Get the client data for the specific id;
-    //     if (clientData.TryGetValue(clientId, out PlayerData playerData))
-    //     {
-    //         return playerData;
-    //     }
-
-    //     return null;
-    // }
 
 
 }

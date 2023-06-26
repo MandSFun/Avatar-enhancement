@@ -16,6 +16,16 @@ services:
       WAIT_HOSTS_TIMEOUT: "300"
       WAIT_SLEEP_INTERVAL: "5"
       WAIT_HOST_CONNECT_TIMEOUT: "3"
+      AGENT_WALLET_SEED: "bobby000000000000000000000000001"
+      LABEL: "Bobby"
+      ACAPY_ENDPOINT_PORT: "8002"
+      ACAPY_ENDPOINT_URL: "http://localhost:8002/"
+      ACAPY_ADMIN_PORT: "${ACAPY_ADMIN_PORT}"
+      LEDGER_URL: "http://host.docker.internal:9000"
+      TAILS_SERVER_URL: "http://tails-server:6543"
+      CONTROLLER_PORT: "${CONTROLLER_PORT}"
+      WALLET_NAME: "Bobby"
+      WALLET_KEY: "secret"
     entrypoint: /bin/bash
     command: [
        "-c",
