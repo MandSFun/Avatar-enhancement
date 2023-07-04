@@ -3,10 +3,11 @@
 This project focuses on the networking side of Unity.
 
 ## Table of Contents
-
+- [Credits](#credits)
 - [Installation](#installation)
 - [Features](#features)
 - [Walkthrough](#walkthrough)
+## Credits
 
 ## Installation
 
@@ -19,6 +20,8 @@ This project focuses on the networking side of Unity.
 ## Features
 
 ### How to use
+### Cloning
+
 > 1. Create folder 'Avatar'
 > 2. Clone into folder
 > 3. Open project, under File > Build Settings > Build and Run
@@ -30,6 +33,12 @@ sharedassets0.assets
 sharedassets0.assets.resS
 
 ```
+### Collaborator 
+> 1. Click **Fork** 
+> 2. Clone into local folder
+> 3. Submit a pull request after pushing changes
+
+
 ### What this project contains
 
 - Movement of user using WASD
