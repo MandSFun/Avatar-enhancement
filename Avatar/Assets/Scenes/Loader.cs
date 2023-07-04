@@ -10,7 +10,8 @@ public static class Loader
     private class LoadingMonoBehaviour: MonoBehaviour { }
     public enum Scene {
         Main, 
-        Name, 
+        Registration,
+        Login, 
         Loading,
         SplashScreen
     }
