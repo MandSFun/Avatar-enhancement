@@ -1,8 +1,12 @@
-using System.Text;
 using System;
+using System.Text;
+using System.Threading;
+using System.IO; // for Path
+using System.Reflection; // for Assembly
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine.Networking;
 using UnityEngine;
@@ -156,15 +160,17 @@ public class testingNetworkManager : NetworkBehaviour
             Dictionary<string, string> arguments = new Dictionary<string, string>();
             arguments.Add("DID", response.did);
             arguments.Add("WALLET_NAME", name);
-            arguments.Add("Verkey", response.verkey);
-            arguments.Add("SEED", response.seed);
+            arguments.Add("LABEL", name);
+            arguments.Add("VERKEY", response.verkey);
+            arguments.Add("AGENT_WALLET_SEED", response.seed);
             arguments.Add("WALLET_KEY", password);
             UnityEngine.Debug.Log("DID: " + arguments["DID"]);
-            UnityEngine.Debug.Log("Verkey: " + arguments["Verkey"]);
+            UnityEngine.Debug.Log("Verkey: " + arguments["VERKEY"]);
             
             // Load Scene for choosing host/client
             Loader.Load(Loader.Scene.Main);
-            StartAcaPyInstance(arguments);
+            StartAcaPyInstanceAsync(arguments);
+            request.Dispose();
 
         }
         else
@@ -218,40 +224,56 @@ public class testingNetworkManager : NetworkBehaviour
     //     // process.WaitForExit();
     // }
 
-    public void RunDockerCompose(string composeFilePath, string[] additionalArgs = null)
+    public async Task RunDockerComposeAsync(string composeFilePath, Dictionary<string, string> arguments)
     {
-        // Create a new process instance
         Process process = new Process();
 
         try
         {
-            // Set the process start info
-            process.StartInfo.FileName = "docker-compose";
-            process.StartInfo.Arguments = $"-f {composeFilePath} up -d"; // Specify the compose file and command
+            string composeFile = Path.GetDirectoryName(composeFilePath);
+            string currentScriptPath = Assembly.GetExecutingAssembly().Location; // Get the current script file path
+            string currentScriptDirectory = Path.GetDirectoryName(currentScriptPath); // Get the directory path of the current script
+            string composeFileFullPath = Path.Combine(currentScriptDirectory, composeFile); // Combine the current script directory with the relative compose file path
+            
 
-            if (additionalArgs != null && additionalArgs.Length > 0)
-            {
-                string argsString = string.Join(" ", additionalArgs);
-                process.StartInfo.Arguments += $" {argsString}";
-            }
+            UnityEngine.Debug.Log("Directory of composeFileFullPath: " + composeFileFullPath);
+            
+            UnityEngine.Debug.Log("Overriding env file");
+            //.env file path
+            string envFullPath = Path.Combine(composeFileFullPath, ".env");
+            UnityEngine.Debug.Log("Env path: " + envFullPath);
 
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
+            SaveEnvFile(envFullPath, arguments);
+            UnityEngine.Debug.Log("Override complete");
 
-            // Event handlers for capturing output
-            process.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
-            process.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.WorkingDirectory = composeFileFullPath; // Set the working directory to the current script directory
+            process.StartInfo.Arguments = $"/k docker-compose up"; // Specify the compose file and command
+    
+            // if (additionalArgs != null && additionalArgs.Length > 0)
+            // {
+            //     string argsString = string.Join(" --env ", additionalArgs);
+            //     process.StartInfo.Arguments += $" {argsString}";
+            // }
+            UnityEngine.Debug.Log("Directory of process.StartInfo.Arguments: " + process.StartInfo.Arguments);
 
-            // Start the process
+
+            process.StartInfo.UseShellExecute = true;
+
+            // TaskCompletionSource<object> processExitCompletionSource = new TaskCompletionSource<object>();
+
+            // process.Exited += (sender, e) =>
+            // {
+            //     processExitCompletionSource.TrySetResult(null);
+            // };
+
+            process.EnableRaisingEvents = true;
             process.Start();
 
-            // Begin capturing output
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            bool processStarted = await Task.Run(() => process.WaitForExit(Timeout.Infinite));
+            UnityEngine.Debug.Log("Process started?: " + processStarted);
 
-            // Wait for the process to exit
-            process.WaitForExit();
+            // await processExitCompletionSource.Task;
         }
         catch (Exception ex)
         {
@@ -259,24 +281,69 @@ public class testingNetworkManager : NetworkBehaviour
         }
         finally
         {
-            // Cleanup resources
             process.Close();
             process.Dispose();
         }
     }
 
-    private void StartAcaPyInstance(Dictionary<string, string> arguments)
+    // Function to save the dictionary as a .env file
+    void SaveEnvFile(string filePath, Dictionary<string, string> envVariables)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            foreach (KeyValuePair<string, string> kvp in envVariables)
+            {
+                writer.WriteLine($"{kvp.Key}={kvp.Value}");
+            }
+        }
+    }
+
+    
+    // Function to load the contents of the .env file into a dictionary
+    Dictionary<string, string> LoadEnvFile(string filePath)
+    {
+        Dictionary<string, string> envVariables = new Dictionary<string, string>();
+
+        if (File.Exists(filePath))
+        {
+            string[] lines = File.ReadAllLines(filePath);
+
+            foreach (string line in lines)
+            {
+                string trimmedLine = line.Trim();
+
+                if (!string.IsNullOrEmpty(trimmedLine) && !trimmedLine.StartsWith("#"))
+                {
+                    int equalsIndex = trimmedLine.IndexOf('=');
+                    if (equalsIndex > 0)
+                    {
+                        string key = trimmedLine.Substring(0, equalsIndex);
+                        string value = trimmedLine.Substring(equalsIndex + 1);
+                        envVariables[key] = value;
+                    }
+                }
+            }
+        }
+
+        return envVariables;
+    }
+
+    private async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
     {
         // string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
         // string scriptCommand = "./run_docker start";
-        string composeFilePath = "../Wallet/docker-compose.yml";
-        arguments.Add("ACAPY_ENDPOINT_PORT", "8002");
-        arguments.Add("ACAPY_ADMIN_PORT", "11002");
-        arguments.Add("CONTROLLER_PORT", "3000");
-        string[] additionalArgs = { $"--WALLET_KEY={arguments["WALLET_KEY"]}", $"--LABEL={arguments["WALLET_NAME"]}", $"--WALLET_NAME={arguments["WALLET_NAME"]}", $"--AGENT_WALLET_SEED={arguments["SEED"]}", $"--ACAPY_ENDPOINT_PORT={arguments["ACAPY_ENDPOINT_PORT"]}", $"--ACAPY_ADMIN_PORT={arguments["ACAPY_ADMIN_PORT"]}", $"--CONTROLLER_PORT={arguments["CONTROLLER_PORT"]}" };
+        string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
+        arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
+        arguments.Add("ACAPY_ADMIN_PORT", "11001");
+        arguments.Add("CONTROLLER_PORT", "3001");
+        arguments.Add("ACAPY_ENDPOINT_URL", "http://localhost:8002/");
+        arguments.Add("LEDGER_URL", "http://host.docker.internal:9000");
+        arguments.Add("TAILS_SERVER_URL", "http://tails-server:6543");
+        // string[] additionalArgs = { $"--WALLET_KEY={arguments["WALLET_KEY"]}", $"--LABEL={arguments["WALLET_NAME"]}", $"--WALLET_NAME={arguments["WALLET_NAME"]}", $"--AGENT_WALLET_SEED={arguments["SEED"]}", $"--ACAPY_ENDPOINT_PORT={arguments["ACAPY_ENDPOINT_PORT"]}", $"--ACAPY_ADMIN_PORT={arguments["ACAPY_ADMIN_PORT"]}", $"--CONTROLLER_PORT={arguments["CONTROLLER_PORT"]}" };
 
         UnityEngine.Debug.Log("Starting ACA-PY instance now");
-        RunDockerCompose(composeFilePath, additionalArgs);
+        await RunDockerComposeAsync(composeFilePath, arguments);
+        UnityEngine.Debug.Log("Docker Compose completed.");
         // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
 

@@ -8,7 +8,7 @@ namespace write_did_and_query_verkey
     {
         static void Main(string[] args)
         {
-            Dictionary<string, string> arguments = new Dictionary<string, string>();
+            // Dictionary<string, string> arguments = new Dictionary<string, string>();
             // arguments.Add("WalletName", "Lucas");
             // arguments.Add("Seed", "lucas000000000000000000000000001");
             // WriteDIDAndQueryVerkey.WriteDID(arguments);
