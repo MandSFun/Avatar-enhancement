@@ -1105,40 +1105,6 @@ MonoBehaviour:
     m_Y: 0
     m_Width: 11
     m_Height: 511
-<<<<<<< HEAD
-  - m_X: 265
-    m_Y: 66
-    m_Width: 246
-    m_Height: 445
-  - m_X: 265
-    m_Y: 65
-    m_Width: 15
-    m_Height: 446
-  - m_X: 142
-    m_Y: 25
-    m_Width: 11
-    m_Height: 55
-  - m_X: 0
-    m_Y: 159
-    m_Width: 511
-    m_Height: 352
-  - m_X: 0
-    m_Y: 158
-    m_Width: 142
-    m_Height: 353
-  - m_X: 203
-    m_Y: 80
-    m_Width: 20
-    m_Height: 431
-  - m_X: 203
-    m_Y: 130
-    m_Width: 308
-    m_Height: 381
-  - m_X: 82
-    m_Y: 108
-    m_Width: 60
-    m_Height: 403
-=======
   - m_X: 78
     m_Y: 28
     m_Width: 5
@@ -1255,7 +1221,6 @@ MonoBehaviour:
     m_Y: 242
     m_Width: 26
     m_Height: 5
->>>>>>> 1dd0168 (added in fonts used for scenes)
   m_fontInfo:
     Name: Liberation Sans
     PointSize: 86
