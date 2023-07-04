@@ -1,0 +1,104 @@
+version: '3'
+services:
+  acapy:
+    image: aortz1999/aries-cloudagent-run:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+    ports:
+      - "${ACAPY_ADMIN_PORT}:${ACAPY_ADMIN_PORT}"
+      - "${ACAPY_ENDPOINT_PORT}:${ACAPY_ENDPOINT_PORT}"
+    networks:
+      - von
+    environment:
+      WAIT_HOSTS: "db:5432"
+      WAIT_HOSTS_TIMEOUT: "300"
+      WAIT_SLEEP_INTERVAL: "5"
+      WAIT_HOST_CONNECT_TIMEOUT: "3"
+      AGENT_WALLET_SEED: "bobby000000000000000000000000001"
+      LABEL: "Bobby"
+      ACAPY_ENDPOINT_PORT: "8002"
+      ACAPY_ENDPOINT_URL: "http://localhost:8002/"
+      ACAPY_ADMIN_PORT: "${ACAPY_ADMIN_PORT}"
+      LEDGER_URL: "http://host.docker.internal:9000"
+      TAILS_SERVER_URL: "http://tails-server:6543"
+      CONTROLLER_PORT: "${CONTROLLER_PORT}"
+      WALLET_NAME: "Bobby"
+      WALLET_KEY: "secret"
+    entrypoint: /bin/bash
+    command: [
+       "-c",
+       "sleep 5; \
+        /wait; \
+        aca-py start \
+        --auto-provision \
+        -e ${ACAPY_ENDPOINT_URL} \
+        -it http '0.0.0.0' ${ACAPY_ENDPOINT_PORT} \
+        -ot http \
+        --admin '0.0.0.0' ${ACAPY_ADMIN_PORT} \
+        --wallet-type indy \
+        --wallet-name ${WALLET_NAME}
+        --wallet-key ${WALLET_KEY}
+        --wallet-storage-type postgres_storage
+        --wallet-storage-config '{\"url\":\"db:5432\",\"max_connections\":5}'
+        --wallet-storage-creds '{\"account\":\"postgres\",\"password\":\"password\",\"admin_account\":\"postgres\",\"admin_password\":\"password\"}'
+        --seed ${AGENT_WALLET_SEED} \
+        --genesis-url ${LEDGER_URL}/genesis \
+        --tails-server-base-url ${TAILS_SERVER_URL} \
+        --label ${LABEL} \
+        --auto-accept-invites \
+        --admin-insecure-mode \
+        --log-level info",
+    ]
+
+  db:
+    image: postgres:latest
+    hostname: db
+    networks:
+      - von
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d/
+      - ./.postgres:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  controller:
+    image: aortz1999/issuer:latest
+    networks:
+      - von
+    environment:
+      ACAPY_ADMIN_PORT: "${ACAPY_ADMIN_PORT}"
+      CONTROLLER_PORT: "${CONTROLLER_PORT}"
+      WAIT_HOSTS: "acapy:${ACAPY_ADMIN_PORT}"
+      WAIT_HOSTS_TIMEOUT: "300"
+      WAIT_SLEEP_INTERVAL: "5"
+      WAIT_HOST_CONNECT_TIMEOUT: "3"
+    depends_on:
+      - acapy
+    ports:
+      - "${CONTROLLER_PORT}:${CONTROLLER_PORT}"
+
+  tails-server:
+    image: aortz1999/tails-server:latest
+    ports:
+      - 6543:6543
+    volumes:
+      - /issuer/tails-files:/tails-files/
+    environment:
+      GENESIS_URL: "${LEDGER_URL}/genesis"
+      TAILS_SERVER_URL: "${TAILS_SERVER_URL}"
+    command: >
+      tails-server
+        --host 0.0.0.0
+        --port 6543
+        --storage-path /tails-files
+        --log-level INFO   
+
+networks:
+  von:
+    name: von_von
+    external: true
