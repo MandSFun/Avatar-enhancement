@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Avatar/Assets/Main Scene Folder/Scripts/Wallet/bin.meta
 guid: 81494db8bd7d172ce94f3322fad8a129
+========
+guid: c1068cdb028abe3cc8b3b6382cf1e684
+>>>>>>>> d1cd01d99156dd205a94f2c7fc454c9123db0e71:Avatar/Assets/Main Scene Folder/Scripts/Wallet.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
