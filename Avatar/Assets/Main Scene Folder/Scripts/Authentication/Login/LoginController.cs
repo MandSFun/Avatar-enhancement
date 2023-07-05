@@ -11,26 +11,16 @@ using Unity.Netcode;
 using UnityEngine.Networking;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Newtonsoft.Json;
 
-[System.Serializable]
-public class JsonData
-{
-    public string did;
-    public string seed;
-    public string verkey;
-}
 
-public class testingNetworkManager : NetworkBehaviour
-{ 
+public class LoginController : MonoBehaviour
+{
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
-    [SerializeField] private TMP_Dropdown dropDown;
-
-
-
 
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
@@ -71,18 +61,13 @@ public class testingNetworkManager : NetworkBehaviour
     //     }
     // }
 
-    public void Register(){
+    public void Login(){
 
         //TODO: Add check that name is not already on the blockchain        
 
         //Get name and password from input fields
         string name = nameInputField.text;
-
-
         string password = passwordInputField.text;
-        string role = dropDown.captionText.text;
-
-        UnityEngine.Debug.Log("Role: " + role);
 
         //format string to have no whitespace and to be all lowercase
         string seed = name;
@@ -98,10 +83,11 @@ public class testingNetworkManager : NetworkBehaviour
         }
         seed = seed + "1";
 
+        UnityEngine.Debug.Log("Seed: " + seed);
+
         //register the DID based on the seed value using the von-network webserver
         Dictionary<string, string> registrationData = new Dictionary<string, string>();
         registrationData.Add("seed", seed);
-        registrationData.Add("role", role);
         registrationData.Add("alias", nameInputField.text);
         // {
         //     { "seed", seed },
@@ -116,11 +102,11 @@ public class testingNetworkManager : NetworkBehaviour
 
         // Debug.Log(url);
         // Send the registration data to ACA-Py agent via HTTP request
-        StartCoroutine(SendRegistrationRequest(url, jsonData, password, name));
+        StartCoroutine(SendLoginRequest(url, jsonData, password, name));
         
     }
 
-    IEnumerator SendRegistrationRequest(string url, string jsonData, string password, string name)
+    IEnumerator SendLoginRequest(string url, string jsonData, string password, string name)
     {
         var request = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
@@ -346,5 +332,7 @@ public class testingNetworkManager : NetworkBehaviour
         // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
 
-
+    public void RedirectToRegistration(){
+        Loader.Load(Loader.Scene.Registration);
+    }
 }

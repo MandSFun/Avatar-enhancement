@@ -12,6 +12,6 @@ using TMPro;
 public class RegistrationController : MonoBehaviour
 {
     public void RedirectToLogin(){
-        Loader.Load(Loader.Scene.Main);
+        Loader.Load(Loader.Scene.Login);
     }
 }
