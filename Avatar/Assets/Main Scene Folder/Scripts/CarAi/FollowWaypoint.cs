@@ -15,7 +15,7 @@ public class FollowWaypoint : MonoBehaviour
     private float AbscarSpeed;
     private float moveSpeed = 5f; // Adjust this value to control the car's movement speed
     private bool isLastWaypoint;
-    private bool isLooping;
+    public bool isLooping;
 
     private void Start()
     {
