@@ -1003,6 +1003,7 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 128
+  spawned: 0
 --- !u!114 &4900686166078443104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1288,7 +1289,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4900686166078443330
 Transform:
   m_ObjectHideFlags: 0
@@ -16720,6 +16721,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7144015b6bf8d70458a13cfe6768d218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneviewCamera: {fileID: 0}
+  mainCamera: {fileID: 0}
+  thirdperson: {fileID: 0}
 --- !u!1 &4900686166078442706
 GameObject:
   m_ObjectHideFlags: 0

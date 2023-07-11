@@ -126,7 +126,7 @@ public class PlayerInteractable : NetworkBehaviour
         isPickupAnimationPlaying = true;
 
         // Check if the weapon identifier exists in the dictionary
-        if (weaponPrefabs.  ContainsKey(weaponIdentifier))
+        if (weaponPrefabs.ContainsKey(weaponIdentifier))
         {
             // Get the corresponding weapon prefab
             GameObject weaponPrefab = weaponPrefabs[weaponIdentifier];
