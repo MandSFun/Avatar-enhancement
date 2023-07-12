@@ -71,6 +71,8 @@ Unity does not include any [upm](https://openupm.com/) packages or any dependant
 - Animation rigging
 - Cinemachine
 - input System
+3. Under **Edit**, go to **Project Settings** -> **Player** -> **Configurations**
+4. Change "Input Manager(Old)" to "Both"
 
 > Ensure all samples are imported.
 ### Collaborator

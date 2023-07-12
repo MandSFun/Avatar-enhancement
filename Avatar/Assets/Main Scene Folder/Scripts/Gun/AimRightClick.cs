@@ -10,6 +10,9 @@ public class AimRightClick : MonoBehaviour
     PrometeoCarController prom;
     private float raisingtime = 0.18f;
     bool isAiming = false;
+    private float timestamp  = 0f;
+
+    private float perShotDelay = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +21,7 @@ public class AimRightClick : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         if(Input.GetMouseButton(1) &&Gun !=null ){
             aimingRig.weight +=Time.deltaTime / raisingtime;
             isAiming = true;
@@ -35,8 +38,12 @@ public class AimRightClick : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.G) && Gun!=null){
                 Gun.isFiring();   
             }
+    
+       
+        
         }
     }
+    
      private void OnEnable()
     {
         PlayerInteractable.OnHasWeaponChanged += HandleHasWeaponChanged;
