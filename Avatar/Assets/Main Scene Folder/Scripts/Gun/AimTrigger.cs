@@ -31,9 +31,16 @@ public class AimTrigger : MonoBehaviour
         if(isAiming== true )
         {
 
-            if(Input.GetKeyDown(KeyCode.G) && shoot!=null){
-                shoot.isFiring();   
+           if (Input.GetKeyDown(KeyCode.G) && shoot != null)
+            {
+                shoot.StartFiring();
             }
+
+            if (Input.GetKeyUp(KeyCode.G) && shoot != null)
+            {
+                shoot.StopFiring();
+            }
+
         }
         if(currentTarget!=null){
             Debug.Log("Now facing "+currentTarget.name);

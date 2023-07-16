@@ -24,8 +24,9 @@ public class CamSceneview : NetworkBehaviour
         thirdpersoncam = GameObject.FindGameObjectWithTag("PlayerFollowCamera");
         waypointPlacer.enabled = false;
         carSpawned = false;
-        freefly.enabled=false;
+        freefly.enabled=false;  
     }
+
 
     public override void OnNetworkSpawn()
     {
@@ -60,8 +61,8 @@ public class CamSceneview : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
+        if (Input.GetKeyDown(KeyCode.H) &&IsSpawned)
+        { 
             if (sceneviewCamera.enabled)
             {   
                 sceneviewCamera.enabled = false;

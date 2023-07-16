@@ -35,8 +35,13 @@ public class NPCgun : MonoBehaviour
         }
           if(Input.GetKeyDown(KeyCode.V) && aimingRig.weight==1){
 
-                gun.isFiring();   
+                gun.StartFiring();   
             }
+            if (Input.GetKeyUp(KeyCode.V) && aimingRig.weight==1)
+            {
+                gun.StopFiring();
+            }
+
 
     }
     
