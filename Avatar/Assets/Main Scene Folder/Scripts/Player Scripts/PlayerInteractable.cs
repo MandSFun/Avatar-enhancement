@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Unity.Netcode;
+using StarterAssets;
 
 public class PlayerInteractable : NetworkBehaviour
 {
@@ -35,7 +36,8 @@ public class PlayerInteractable : NetworkBehaviour
     [SerializeField] private MultiParentConstraint weaponPose;
     [SerializeField] private MultiParentConstraint TargetAiming;
     [SerializeField] private MultiParentConstraint rightclickAiming;
-
+    
+    private ThirdPersonController playerController;
     public delegate void HasWeaponChanged(bool value);
     public static event HasWeaponChanged OnHasWeaponChanged;
 
@@ -46,6 +48,8 @@ public class PlayerInteractable : NetworkBehaviour
         anim = GetComponent<Animator>();
         AssignAnimationIDs();
         rb = GetComponent<RigBuilder>();
+        playerController = GetComponent<ThirdPersonController>();
+
      
 
         Debug.Log("Hello");
@@ -89,7 +93,7 @@ public class PlayerInteractable : NetworkBehaviour
 
                         // Trigger the object's interaction
 
-
+                         playerController.enabled = false;
                         // Get the identifier of the weapon
                         string weaponIdentifier = objectInteraction.GetWeaponIdentifier();
 
@@ -122,7 +126,7 @@ public class PlayerInteractable : NetworkBehaviour
         isPickupAnimationPlaying = true;
 
         // Check if the weapon identifier exists in the dictionary
-        if (weaponPrefabs.ContainsKey(weaponIdentifier))
+        if (weaponPrefabs.  ContainsKey(weaponIdentifier))
         {
             // Get the corresponding weapon prefab
             GameObject weaponPrefab = weaponPrefabs[weaponIdentifier];
@@ -151,6 +155,7 @@ public class PlayerInteractable : NetworkBehaviour
 
 
         }
+        playerController.enabled = true;
     }
 
     private void OnAnimatorMove() { }//Callback function by unity to overrirde the default root motion handling this behaviour;

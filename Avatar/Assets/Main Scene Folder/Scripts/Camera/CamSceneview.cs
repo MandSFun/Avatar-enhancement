@@ -63,7 +63,7 @@ public class CamSceneview : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             if (sceneviewCamera.enabled)
-            {
+            {   
                 sceneviewCamera.enabled = false;
                 mainCamera.SetActive(true);
                 controller.enabled = true;
