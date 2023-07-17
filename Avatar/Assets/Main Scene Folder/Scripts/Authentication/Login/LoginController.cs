@@ -25,41 +25,6 @@ public class LoginController : MonoBehaviour
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
 
-   // Start is called before the first frame update
-    // private void Start()
-    // {
-    // NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
-    //  NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
-
-    
-
-
-    // }
-
-    // public void handleDropDownValueChange(int index) {
-    //     switch(index){
-    //         case(0):{
-    //             role = "TRUST_ANCHOR";
-    //             break;
-    //         }
-    //         case(1):{
-    //             role = "Endorser";
-    //             break;
-    //         }
-    //         case(2):{
-    //             role = "Issuer";
-    //             break;
-    //         }
-    //         case(3):{
-    //             role = "Holder";
-    //             break;
-    //         }
-    //         case(4):{
-    //             role = "Mediator";
-    //             break;
-    //         }
-    //     }
-    // }
 
     public void Login(){
 
@@ -129,7 +94,7 @@ public class LoginController : MonoBehaviour
         UnityEngine.Debug.Log(httpRequest.webRequest.result);
         if (httpRequest.webRequest.result == UnityWebRequest.Result.Success)
         {
-            UnityEngine.Debug.Log("Registration successful!");
+            UnityEngine.Debug.Log("Login successful!");
             // Debug.Log(request.downloadHandler.text);
             var response = JsonUtility.FromJson<JsonData>(httpRequest.webRequest.downloadHandler.text);
             
@@ -165,50 +130,6 @@ public class LoginController : MonoBehaviour
     }
 
 
-    // private void RunScriptInDirectory(string directoryPath, string scriptCommand, Dictionary<string, string> arguments)
-    // {
-    //     ProcessStartInfo startInfo = new ProcessStartInfo
-    //     {
-    //         WorkingDirectory = directoryPath,
-    //         FileName = "bash",
-    //         Arguments = $"-c \"{scriptCommand}\" --label {arguments["Name"]} -it http 0.0.0.0 8001 -ot http --admin 0.0.0.0 11001 --admin-insecure-mode --genesis-url http://host.docker.internal:9000/genesis --endpoint http://localhost:8001/ --seed {arguments["Seed"]} --debug-connections --auto-provision --wallet-type indy --wallet-name {arguments["Name"]} --wallet-key {arguments["WalletSecret"]}",
-    //         RedirectStandardOutput = true,
-    //         RedirectStandardError = true,
-    //         UseShellExecute = false,
-    //         WindowStyle =  ProcessWindowStyle.Minimized,
-    //         // CreateNoWindow = true
-    //     };
-
-    //     Process process = new Process();
-    //     process.StartInfo = startInfo;
-
-    //     process.OutputDataReceived += (sender, e) =>
-    //     {
-    //         if (!string.IsNullOrEmpty(e.Data))
-    //         {
-    //             Console.WriteLine(e.Data);
-    //         }
-    //     };
-
-    //     process.ErrorDataReceived += (sender, e) =>
-    //     {
-    //         if (!string.IsNullOrEmpty(e.Data))
-    //         {
-    //             Console.WriteLine(e.Data);
-    //         }
-    //     };
-
-    //     // UnityEngine.Debug.Log("Running script now");
-
-    //     process.Start();
-    //     UnityEngine.Debug.Log("Running script now");
-    //     process.BeginOutputReadLine();
-    //     process.BeginErrorReadLine();
-    //     UnityEngine.Debug.Log(process.StartInfo);
-    //     UnityEngine.Debug.Log("Process start time:" + process.StartTime);
-    //     // process.WaitForExit();
-    // }
-
     public async Task RunDockerComposeAsync(string composeFilePath, Dictionary<string, string> arguments)
     {
         Process process = new Process();
@@ -233,24 +154,12 @@ public class LoginController : MonoBehaviour
 
             process.StartInfo.FileName = "cmd.exe";
             process.StartInfo.WorkingDirectory = composeFileFullPath; // Set the working directory to the current script directory
-            process.StartInfo.Arguments = $"/k docker-compose up"; // Specify the compose file and command
+            process.StartInfo.Arguments = $"/k docker-compose -f docker-compose.login.yaml up"; // Specify the compose file and command
     
-            // if (additionalArgs != null && additionalArgs.Length > 0)
-            // {
-            //     string argsString = string.Join(" --env ", additionalArgs);
-            //     process.StartInfo.Arguments += $" {argsString}";
-            // }
             UnityEngine.Debug.Log("Directory of process.StartInfo.Arguments: " + process.StartInfo.Arguments);
 
 
             process.StartInfo.UseShellExecute = true;
-
-            // TaskCompletionSource<object> processExitCompletionSource = new TaskCompletionSource<object>();
-
-            // process.Exited += (sender, e) =>
-            // {
-            //     processExitCompletionSource.TrySetResult(null);
-            // };
 
             process.EnableRaisingEvents = true;
             process.Start();
@@ -258,7 +167,6 @@ public class LoginController : MonoBehaviour
             bool processStarted = await Task.Run(() => process.WaitForExit(Timeout.Infinite));
             UnityEngine.Debug.Log("Process started?: " + processStarted);
 
-            // await processExitCompletionSource.Task;
         }
         catch (Exception ex)
         {
