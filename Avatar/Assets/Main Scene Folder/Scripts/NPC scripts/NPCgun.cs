@@ -11,6 +11,8 @@ public class NPCgun : MonoBehaviour
     public float aimDuration = 0.3f;
     private bool aimStance;
 
+       [SerializeField] private Camera sceneviewCamera;
+
     [SerializeField]GameObject weaponOnHand;
     Shooting gun;
     private void Start(){
@@ -20,7 +22,7 @@ public class NPCgun : MonoBehaviour
     {
 
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !sceneviewCamera.isActiveAndEnabled)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
