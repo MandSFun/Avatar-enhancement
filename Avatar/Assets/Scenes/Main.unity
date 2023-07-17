@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1726,6 +1726,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 421325201500217396, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
   m_PrefabInstance: {fileID: 8788901964564173101}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1429367330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9137540501882963761, guid: 1f793ceaef9948e4ea38cc3a95424321, type: 3}
+  m_PrefabInstance: {fileID: 9137540501330246444}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1496355019
 GameObject:
   m_ObjectHideFlags: 0
@@ -1809,7 +1814,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1496355022}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 963883139}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1496355022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2083,7 +2100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: resizeFromRight
@@ -2095,7 +2112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: 792.00006
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3335,11 +3352,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 421325201500217393, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9960443
       objectReference: {fileID: 0}
     - target: {fileID: 421325201500217393, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.088858046
       objectReference: {fileID: 0}
     - target: {fileID: 421325201500217393, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
       propertyPath: m_LocalRotation.y
@@ -3513,3 +3530,18 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9137540501882963762, guid: 1f793ceaef9948e4ea38cc3a95424321, type: 3}
   m_PrefabInstance: {fileID: 9137540501330246444}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9137540501330246449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1429367330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10754864ae739fb48bcaacb9aded697a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followWaypoint: {fileID: 0}
+  toggleButton: {fileID: 1496355021}
+  toggleButtonText: {fileID: 364156579}

@@ -65,6 +65,7 @@ public class ModelSpawner : NetworkBehaviour
         PrometeoCarController carController = spawnedModel.GetComponent<PrometeoCarController>();
       
         spawnedModel.GetComponent<NetworkObject>().Spawn();
+   
 
     }
 
