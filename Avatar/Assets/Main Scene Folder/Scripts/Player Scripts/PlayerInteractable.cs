@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Unity.Netcode;
-using StarterAssets;
+using System;
 
 public class PlayerInteractable : NetworkBehaviour
 {
@@ -13,7 +13,7 @@ public class PlayerInteractable : NetworkBehaviour
     private Animator anim;
     private int animPickup;
     private Transform currentInteractable;
-    private bool isPickupAnimationPlaying;
+    [SerializeField] public bool isAnimationPlaying = false;
     [SerializeField] private AimTrigger aimTrigger;
 
     [SerializeField] private Transform pickingupPlaceholder; // Reference to the hand bone GameObject;
@@ -29,7 +29,7 @@ public class PlayerInteractable : NetworkBehaviour
     private GameObject weapon;
 
     [SerializeField] Transform shoulder;
-    private bool hasWeapon;
+    public bool hasWeapon;
 
     [SerializeField] private TwoBoneIKConstraint lefthandIK;
     [SerializeField] private TwoBoneIKConstraint righthandIK;
@@ -37,9 +37,12 @@ public class PlayerInteractable : NetworkBehaviour
     [SerializeField] private MultiParentConstraint TargetAiming;
     [SerializeField] private MultiParentConstraint rightclickAiming;
     
-    private ThirdPersonController playerController;
+    private StarterAssets.ThirdPersonController playerController;
     public delegate void HasWeaponChanged(bool value);
     public static event HasWeaponChanged OnHasWeaponChanged;
+
+    [SerializeField]  private Item itemAK47;
+    
 
     private void Start()
     {
@@ -48,7 +51,7 @@ public class PlayerInteractable : NetworkBehaviour
         anim = GetComponent<Animator>();
         AssignAnimationIDs();
         rb = GetComponent<RigBuilder>();
-        playerController = GetComponent<ThirdPersonController>();
+        playerController = GetComponent<StarterAssets.ThirdPersonController>();
 
      
 
@@ -99,12 +102,33 @@ public class PlayerInteractable : NetworkBehaviour
 
                         // Trigger the pickup animation with the weapon identifier
                         TriggerPickupAnimation(collider.transform.position, weaponIdentifier);
-
+                        AddItemToInventory(weaponIdentifier);
+                        PickableItemScript.instance.hasItem = true;
                         Debug.Log("Playing");
                         break;
                     }
                 }
             }
+        }
+
+
+        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0f && (anim.GetCurrentAnimatorStateInfo(0).IsName("Throw") || anim.GetCurrentAnimatorStateInfo(0).IsName("Pickup"))){
+            isAnimationPlaying = true;
+        }
+        else
+        {
+            isAnimationPlaying = false;
+        }
+        
+    }
+
+    private void AddItemToInventory(string weaponIdentifier)
+    {
+        int playerID = NetworkManagerUI.instance.playerID;
+        if (weaponIdentifier == "AK47")
+        {
+            InventoryManager.instance.AddItem(itemAK47, true, playerID);
+            
         }
         
     }
@@ -123,7 +147,7 @@ public class PlayerInteractable : NetworkBehaviour
 
         // Trigger the pickup animation
         anim.SetTrigger(animPickup);
-        isPickupAnimationPlaying = true;
+        
 
         // Check if the weapon identifier exists in the dictionary
         if (weaponPrefabs.ContainsKey(weaponIdentifier))
@@ -150,7 +174,8 @@ public class PlayerInteractable : NetworkBehaviour
         {
 
             SetHasWeaponTrue(weaponPrefab);
-         SetHasWeapon(true);
+            SetHasWeapon(true);
+            PickableItemScript.instance.hasItem = true;
 
 
 
@@ -170,9 +195,9 @@ public class PlayerInteractable : NetworkBehaviour
 
 
         weaponPose.data.constrainedObject = weapon.transform;
-          rightclickAiming.data.constrainedObject = weapon.transform;
+        rightclickAiming.data.constrainedObject = weapon.transform;
         TargetAiming.data.constrainedObject = weapon.transform;
-      
+
         // Set the weapon's position and rotation
 
         // Update TwoBoneIK targets

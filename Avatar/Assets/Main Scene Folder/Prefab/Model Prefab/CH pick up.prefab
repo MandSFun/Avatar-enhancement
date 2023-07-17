@@ -641,9 +641,7 @@ GameObject:
   - component: {fileID: 4900686166078443153}
   - component: {fileID: 4900686166078443108}
   - component: {fileID: 4900686166078443121}
-  - component: {fileID: 4900686166078443075}
   - component: {fileID: 4900686166078443072}
-  - component: {fileID: 4900686166078443130}
   - component: {fileID: 4900686166078443134}
   - component: {fileID: 4900686166078443109}
   - component: {fileID: 4900686166078443104}
@@ -652,6 +650,9 @@ GameObject:
   - component: {fileID: 2201668394393617724}
   - component: {fileID: 4131596185416828000}
   - component: {fileID: 6465202230211059319}
+  - component: {fileID: 143349829506510557}
+  - component: {fileID: 8302934349524953237}
+  - component: {fileID: 9111397821296253801}
   m_Layer: 6
   m_Name: CH pick up
   m_TagString: Player
@@ -912,32 +913,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &4900686166078443075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4900686166078442603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
 --- !u!114 &4900686166078443072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -954,26 +929,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &4900686166078443130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4900686166078442603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8deae8091111f4eb30a56c1f4e0d3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TransitionStateInfoList:
-  - Layer: 0
-    OriginatingState: -1071854972
-    DestinationState: 1177697483
-    TransitionDuration: 0.25
-    TriggerNameHash: 1177697483
-    TransitionIndex: 3
-  m_Animator: {fileID: 4900686166078443035}
 --- !u!114 &4900686166078443134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1029,6 +984,7 @@ MonoBehaviour:
   weaponPose: {fileID: 3597202028311100565}
   TargetAiming: {fileID: 728091442247835827}
   rightclickAiming: {fileID: 3788969460855052254}
+  itemAK47: {fileID: 11400000, guid: 9ce89312de1b8ec498db04c649d364ba, type: 2}
 --- !u!114 &5075346856353519385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1115,6 +1071,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimingRig: {fileID: 6197484165889421011}
+--- !u!114 &143349829506510557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900686166078442603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f27925db5b9b8f408b582b983900d5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myHands: {fileID: 4900686166078442691}
+  hasItem: 0
+  dynamiteItem: {fileID: 11400000, guid: dd122243760acaf448c1b9ee525f0733, type: 2}
+  aimCam: {fileID: 0}
+  newDynamiteItem: {fileID: 7110251769517384457, guid: 334769f5344d9a546bb3e4e05a498e1d, type: 3}
+  newAk47Item: {fileID: 8533659323394300343, guid: ecb35b5db372f864fa34b8780e260cce, type: 3}
+  playerID: 0
+--- !u!114 &8302934349524953237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900686166078442603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6276344a880546a4da8083fa82ee07c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9111397821296253801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900686166078442603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53c04f23d03a92b4fabc473f1a042911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4900686166078442622
 GameObject:
   m_ObjectHideFlags: 0

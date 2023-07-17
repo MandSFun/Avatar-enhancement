@@ -199,8 +199,12 @@ namespace StarterAssets
                 if (!isDead)
                 {
                     GroundedCheck();
-                    JumpAndGravity();
-                    Move();
+                    if (PlayerInteractable.Instance.isAnimationPlaying  == false)
+                    {
+                        JumpAndGravity();
+                        Move();
+                    }
+                    
                     if (firstpersonstatus == false)
                     {
                         Scroll();
