@@ -13,7 +13,7 @@ public class FollowWaypoint : MonoBehaviour
     private List<Waypoint> waypoints;
     private int currentWaypointIndex;
     private float AbscarSpeed;
-    private float moveSpeed = 5f; // Adjust this value to control the car's movement speed
+    private float moveSpeed = 10f; // Adjust this value to control the car's movement speed
     private bool isLastWaypoint;
     public bool isLooping;
 

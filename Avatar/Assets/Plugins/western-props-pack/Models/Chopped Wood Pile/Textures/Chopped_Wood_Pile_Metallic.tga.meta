@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 53ccbf0880430dd49b6f19a00d5b9b0e
+<<<<<<< HEAD
+guid: 5f499d9558ff580409620ced45bafd46
+=======
+guid: 869adc3d466c8244caea9d2d93f0e596
+>>>>>>> 15ff5e0dbc5fb0fb9083b4eeeb75d60dd1505c44
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -40,10 +44,10 @@ TextureImporter:
     wrapU: 0
     wrapV: 0
     wrapW: 0
-  nPOTScale: 1
+  nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -54,7 +58,7 @@ TextureImporter:
   alphaUsage: 1
   alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 0
+  textureType: 8
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -109,7 +113,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 

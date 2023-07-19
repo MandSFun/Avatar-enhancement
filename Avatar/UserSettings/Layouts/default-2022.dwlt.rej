@@ -1,0 +1,13 @@
+diff a/Avatar/UserSettings/Layouts/default-2022.dwlt b/Avatar/UserSettings/Layouts/default-2022.dwlt	(rejected hunks)
+@@ -545,9 +545,9 @@
+   m_PlayAudio: 0
+   m_AudioPlay: 0
+   m_Position:
+-    m_Target: {x: -12.780651, y: 0.70073664, z: 26.51889}
++    m_Target: {x: 317.4892, y: 83.91819, z: 48.276215}
+     speed: 2
+-    m_Value: {x: -12.440728, y: 0.42678142, z: 27.049547}
++    m_Value: {x: 317.4892, y: 83.91819, z: 48.276215}
+   m_RenderMode: 0
+   m_CameraMode:
+     drawMode: 0

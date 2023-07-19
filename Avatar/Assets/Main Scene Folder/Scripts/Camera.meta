@@ -1,6 +1,17 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
+<<<<<<<< HEAD:Avatar/Assets/Inventory System/Canvas.prefab.meta
+<<<<<<< HEAD
+guid: 08c8791231368a842b08f81ba445215e
+=======
+guid: ff82107273130434ca1511cf890303dc
+>>>>>>> 15ff5e0dbc5fb0fb9083b4eeeb75d60dd1505c44
+PrefabImporter:
+========
+=======
+<<<<<<< HEAD
 <<<<<<<< HEAD:Avatar/Assets/Main Scene Folder/Scripts/Camera.meta
+>>>>>>> origin/main
 guid: 9309643103c930c41b516c101927b07f
 ========
 guid: 3bbbdfa6d0a5ca241a039b4041f286fd
@@ -14,6 +25,7 @@ guid: 9309643103c930c41b516c101927b07f
 >>>>>>> 95af3a01b39eb2c9d13bffdc39b042fc03dec755
 folderAsset: yes
 DefaultImporter:
+>>>>>>>> d1cd01d99156dd205a94f2c7fc454c9123db0e71:Avatar/Assets/Main Scene Folder/Scripts/Camera.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

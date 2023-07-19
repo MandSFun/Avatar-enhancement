@@ -42,10 +42,10 @@ To clone this repository, use the following command:
 git clone https://github.com/MandSFun/Avatar-enhancement.git
 
 ```
-> 1. Create folder 'Avatar'
-> 2. Clone into folder
-> 3. Open project, under File > Build Settings > Build and Run
-> 4. Remember to delete these files under Avatar_Data before staging.
+1. Create folder 'Avatar'
+2. Clone into folder
+3. Open project, under File > Build Settings > Build and Run
+4. Remember to delete these files under Avatar_Data before staging.
 
 ``` 
 sharedassets0.resource
@@ -53,6 +53,28 @@ sharedassets0.assets
 sharedassets0.assets.resS
 
 ```
+### Import and Export of package files
+To export specific files from the project clone,ensure the project importing the files has the following references.
+```
+"com.unity.inputsystem": "1.4.4",
+"com.unity.netcode.gameobjects": "1.2.0",
+"com.unity.animation.rigging": "1.1.1",
+"com.unity.cinemachine": "2.8.9",
+
+```
+Unity does not include any [upm](https://openupm.com/) packages or any dependant packages. Thus you are required to manually import them.
+
+> To import the packages from **Package manager**
+1. Open package manager and select **Unity registry** under Packages.
+2. Search for the following:
+- Netcode for Gameobjects
+- Animation rigging
+- Cinemachine
+- input System
+3. Under **Edit**, go to **Project Settings** -> **Player** -> **Configurations**
+4. Change "Input Manager(Old)" to "Both"
+
+> Ensure all samples are imported.
 ### Collaborator
 To become a collaborator, follow these steps:
 

@@ -23,6 +23,8 @@ TagManager:
   - Sceneview
   - Target
   - road
+  - Car
+  - NPC
   layers:
   - Default
   - TransparentFX
@@ -33,7 +35,7 @@ TagManager:
   - Player
   - Model
   - Road
-  - 
+  - NPC
   - 
   - 
   - 
