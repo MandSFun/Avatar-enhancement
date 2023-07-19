@@ -9,6 +9,10 @@ using TMPro;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
+
+    public int playerID;
+    public static NetworkManagerUI instance;
+
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
 
@@ -24,6 +28,12 @@ public class NetworkManagerUI : NetworkBehaviour
     public NetworkManager network;
     public ulong LocalId => network.LocalClient.ClientId;
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     { //network = NetworkManager.Singleton;
         NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
@@ -68,7 +78,9 @@ public class NetworkManagerUI : NetworkBehaviour
         }
         else
         {
+            playerID = nameInputField.text.GetHashCode();
             NetworkManager.Singleton.StartClient();
+            Debug.Log("ATTENTION hash code is " + playerID);
         }
 
     }
@@ -83,9 +95,12 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             nameInputField.Select();
             nameInputField.ActivateInputField();
+            
         }
         else
         {
+            playerID = nameInputField.text.GetHashCode();
+            Debug.Log("ATTENTION hash code is " + playerID);
             NetworkManager.Singleton.StartHost();
         }
         //setPassword(passwordInputField.text);

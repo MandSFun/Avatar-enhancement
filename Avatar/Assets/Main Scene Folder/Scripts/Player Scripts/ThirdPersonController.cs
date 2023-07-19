@@ -150,7 +150,7 @@ namespace StarterAssets
         {  // Debug.Log(NetworkManager.Singleton.LocalClientId);
 
             //cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-
+            if(!IsOwner)return;
             hasAnim = TryGetComponent(out anim);
             controller = GetComponent<CharacterController>();
             input = GetComponent<StarterAssetsInputs>();
@@ -165,7 +165,7 @@ namespace StarterAssets
             transform.position = new Vector3(0, 0, 0);
             if (IsOwner && IsClient)
             {
-                bloodGush.gameObject.SetActive(false);
+                //bloodGush.gameObject.SetActive(false);
 
                 if (ThirdPersonCam == null && FirstPersonCam == null)
                 {
@@ -199,8 +199,12 @@ namespace StarterAssets
                 if (!isDead)
                 {
                     GroundedCheck();
-                    JumpAndGravity();
-                    Move();
+                    if (PlayerInteractable.Instance.isAnimationPlaying  == false)
+                    {
+                        JumpAndGravity();
+                        Move();
+                    }
+                    
                     if (firstpersonstatus == false)
                     {
                         Scroll();

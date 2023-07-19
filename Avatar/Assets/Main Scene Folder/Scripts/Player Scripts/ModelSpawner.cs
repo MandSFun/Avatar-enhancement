@@ -16,7 +16,12 @@ public class ModelSpawner : NetworkBehaviour
 
     public bool spawned = false;
     private ThirdPersonController playerController;
-
+       [SerializeField] private GameObject sceneviewCamera;
+       Camera svcCamera;
+    private void Start(){
+         sceneviewCamera  = GameObject.FindGameObjectWithTag("Sceneview");
+          svcCamera = sceneviewCamera.GetComponent<Camera>();
+    }
     private void Update()
     {
         if (!IsOwner)
@@ -24,7 +29,7 @@ public class ModelSpawner : NetworkBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !svcCamera.isActiveAndEnabled)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
