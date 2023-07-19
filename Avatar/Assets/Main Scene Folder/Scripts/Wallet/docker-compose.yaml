@@ -38,11 +38,8 @@ services:
         -ot http \
         --admin '0.0.0.0' ${ACAPY_ADMIN_PORT} \
         --wallet-type indy \
-        --wallet-name ${WALLET_NAME}
-        --wallet-key ${WALLET_KEY}
-        --wallet-storage-type postgres_storage
-        --wallet-storage-config '{\"url\":\"db:5432\",\"max_connections\":5}'
-        --wallet-storage-creds '{\"account\":\"postgres\",\"password\":\"password\",\"admin_account\":\"postgres\",\"admin_password\":\"password\"}'
+        --wallet-name ${WALLET_NAME} \
+        --wallet-key ${WALLET_KEY} \
         --seed ${AGENT_WALLET_SEED} \
         --genesis-url ${LEDGER_URL}/genesis \
         --tails-server-base-url ${TAILS_SERVER_URL} \
@@ -51,6 +48,8 @@ services:
         --admin-insecure-mode \
         --log-level info",
     ]
+    # --wallet-storage-config '{\"url\":\"db:5432\",\"max_connections\":5}'
+    # --wallet-storage-creds '{\"account\":\"postgres\",\"password\":\"password\",\"admin_account\":\"postgres\",\"admin_password\":\"password\"}'
 
   db:
     image: postgres:latest
@@ -66,21 +65,21 @@ services:
     ports:
       - "5432:5432"
 
-  controller:
-    image: aortz1999/issuer:latest
-    networks:
-      - von
-    environment:
-      ACAPY_ADMIN_PORT: "${ACAPY_ADMIN_PORT}"
-      CONTROLLER_PORT: "${CONTROLLER_PORT}"
-      WAIT_HOSTS: "acapy:${ACAPY_ADMIN_PORT}"
-      WAIT_HOSTS_TIMEOUT: "300"
-      WAIT_SLEEP_INTERVAL: "5"
-      WAIT_HOST_CONNECT_TIMEOUT: "3"
-    depends_on:
-      - acapy
-    ports:
-      - "${CONTROLLER_PORT}:${CONTROLLER_PORT}"
+  # controller:
+  #   image: aortz1999/issuer:latest
+  #   networks:
+  #     - von
+  #   environment:
+  #     ACAPY_ADMIN_PORT: "${ACAPY_ADMIN_PORT}"
+  #     CONTROLLER_PORT: "${CONTROLLER_PORT}"
+  #     WAIT_HOSTS: "acapy:${ACAPY_ADMIN_PORT}"
+  #     WAIT_HOSTS_TIMEOUT: "300"
+  #     WAIT_SLEEP_INTERVAL: "5"
+  #     WAIT_HOST_CONNECT_TIMEOUT: "3"
+  #   depends_on:
+  #     - acapy
+  #   ports:
+  #     - "${CONTROLLER_PORT}:${CONTROLLER_PORT}"
 
   tails-server:
     image: aortz1999/tails-server:latest

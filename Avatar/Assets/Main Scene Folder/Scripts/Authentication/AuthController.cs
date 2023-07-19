@@ -7,13 +7,17 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Unity.Netcode;
 using UnityEngine.Networking;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 [System.Serializable]
 public class JsonData
@@ -28,99 +32,136 @@ public class AuthController : NetworkBehaviour
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_Dropdown dropDown;
-
-
-
+    public GameObject parentPopupWindow;
+    private GameObject errorWindow;
+    private GameObject successfulRegistrationWindow;
+    
 
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
 
-   // Start is called before the first frame update
-    // private void Start()
-    // {
-    // NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
-    //  NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
+    private static readonly HttpClient client = new HttpClient();
 
-    
-
-
-    // }
-
-    // public void handleDropDownValueChange(int index) {
-    //     switch(index){
-    //         case(0):{
-    //             role = "TRUST_ANCHOR";
-    //             break;
-    //         }
-    //         case(1):{
-    //             role = "Endorser";
-    //             break;
-    //         }
-    //         case(2):{
-    //             role = "Issuer";
-    //             break;
-    //         }
-    //         case(3):{
-    //             role = "Holder";
-    //             break;
-    //         }
-    //         case(4):{
-    //             role = "Mediator";
-    //             break;
-    //         }
-    //     }
-    // }
-
-    public void Register(){
-
-        //TODO: Add check that name is not already on the blockchain        
-
+    /// <summary>
+    /// Starts registration workflow
+    /// </summary>
+    /// <returns></returns>
+    public async void Register(){    
         //Get name and password from input fields
         string name = nameInputField.text;
-
-
         string password = passwordInputField.text;
         string role = dropDown.captionText.text;
 
-        UnityEngine.Debug.Log("Role: " + role);
-
-        //format string to have no whitespace and to be all lowercase
-        string seed = name;
-        string seedFormatted = seed.Replace(" ", "");
-        seed = seedFormatted.ToLower();
-
-        //Format name into wallet seed which is 32 characters
-        int numZero = 32 - seed.Length - 1;
-        
-        for (int i = 0; i < numZero; i++) 
-        {
-            seed = seed + "0";
-        }
-        seed = seed + "1";
-
-        //register the DID based on the seed value using the von-network webserver
-        Dictionary<string, string> registrationData = new Dictionary<string, string>();
-        registrationData.Add("seed", seed);
-        registrationData.Add("role", role);
-        registrationData.Add("alias", nameInputField.text);
-        // {
-        //     { "seed", seed },
-        //     { "role", "TRUST_ANCHOR" },
-        //     { "alias", nameInputField.text }
-        // };
-
-        string jsonData = JsonConvert.SerializeObject(registrationData);
-
-        // Construct the URL for the registration endpoint
-        string url = ledgerUrl + registrationEndpoint;
-
-        // Debug.Log(url);
-        // Send the registration data to ACA-Py agent via HTTP request
-        StartCoroutine(SendRegistrationRequest(url, jsonData, password, name));
-        
+        //Check that name is not already on the blockchain
+        StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
     }
 
-    IEnumerator SendRegistrationRequest(string url, string jsonData, string password, string name)
+    /// <summary>
+    /// Coroutine to check if player is registered on the blockchain
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="ledgerUrl"></param>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public IEnumerator CheckIfDuplicateUserExists(string username, string ledgerUrl, Action<bool> callback){
+        try
+        {
+            string transactionsUrl = $"{ledgerUrl}/ledger/domain?query=&type=1"; // Specify the transaction type as "1" for NYM transactions
+            HttpResponseMessage response = client.GetAsync(transactionsUrl).Result;
+            
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+                var transactions = JToken.Parse(responseBody)["results"];
+                
+                foreach (var transaction in transactions)
+                {
+                    var responseData = transaction["txn"]["data"];
+                    var alias = responseData["alias"];
+                    if(alias !=  null){
+                        if (string.Compare(alias.ToString(), username) == 0)
+                        {
+                            callback(true);
+                            yield break;
+                        }
+                    }
+                    else {
+                        UnityEngine.Debug.Log("Alias is null");
+                        
+                    }
+                }
+            }
+            else
+            {
+                displayErrorText("Error retrieving transactions!");               
+            }
+        }
+        catch (Exception ex)
+        {
+            displayErrorText(ex.Message);
+        }
+        callback(false);
+    }
+
+    /// <summary>
+    /// Handler to check if user exists on distributed ledger
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    /// <param name="role"></param>
+    /// <param name="ledgerUrl"></param>
+    /// <returns></returns>
+    private IEnumerator HandleQueryResult(string username, string password, string role, string ledgerUrl)
+    {
+        yield return StartCoroutine(CheckIfDuplicateUserExists(username, ledgerUrl, (aliasExists) =>
+        {
+            if (aliasExists)
+            {
+                displayErrorText("Username already exists!! Please try a different username");
+            }
+            else
+            {  
+                //format string to have no whitespace and to be all lowercase
+                string seed = username;
+                string seedFormatted = seed.Replace(" ", "");
+                seed = seedFormatted.ToLower();
+
+                //Format name into wallet seed which is 32 characters
+                int numZero = 32 - seed.Length - 1;
+                
+                for (int i = 0; i < numZero; i++) 
+                {
+                    seed = seed + "0";
+                }
+                seed = seed + "1";
+
+                //register the DID based on the seed value using the von-network webserver
+                Dictionary<string, string> registrationData = new Dictionary<string, string>();
+                registrationData.Add("seed", seed);
+                registrationData.Add("role", role);
+                registrationData.Add("alias", nameInputField.text);
+
+                string jsonData = JsonConvert.SerializeObject(registrationData);
+
+                // Construct the URL for the registration endpoint
+                string url = ledgerUrl + registrationEndpoint;
+
+                // Debug.Log(url);
+                // Send the registration data to ACA-Py agent via HTTP request
+                StartCoroutine(SendRegistrationRequest(url, jsonData, password, username));
+            }
+        }));
+    }
+
+    /// <summary>
+    /// Starts coroutine to send registration request to blockchain and start the docker-compose containers if players are registered
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="jsonData"></param>
+    /// <param name="password"></param>
+    /// <param name="name"></param>
+    /// <returns>Redirects players to main game page</returns>
+    private IEnumerator SendRegistrationRequest(string url, string jsonData, string password, string name)
     {
         var request = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
@@ -134,217 +175,37 @@ public class AuthController : NetworkBehaviour
         UnityWebRequestAsyncOperation httpRequest = request.SendWebRequest();
         while(!httpRequest.isDone){
             // Load Scene for choosing host/client
-            // SceneManager.LoadScene(Loader.Scene.Loading.ToString());
-            UnityEngine.Debug.Log("Progress: " + httpRequest.progress);
             yield return null;
         }
         
-        // yield return request.SendWebRequest();
-        UnityEngine.Debug.Log(httpRequest.webRequest.result);
         if (httpRequest.webRequest.result == UnityWebRequest.Result.Success)
         {
-            UnityEngine.Debug.Log("Registration successful!");
+            successfulRegistrationWindow = parentPopupWindow.transform.GetChild(7).gameObject;                
+            TMP_Text successText = successfulRegistrationWindow.transform.GetChild(1).GetComponent<TMP_Text>();
+            successText.text = "Registration successful!";
+            successfulRegistrationWindow.SetActive(true);
             // Debug.Log(request.downloadHandler.text);
             var response = JsonUtility.FromJson<JsonData>(httpRequest.webRequest.downloadHandler.text);
             
-            // string wallet_seed = request.downloadHandler.text["seed"];
-            // string verkey = request.downloadHandler.text["verkey"];
-            // UnityEngine.Debug.Log("DID: " + response.did);
-
-            // Where to send messages that arrive destined for a given verkey 
-            // UnityEngine.Debug.Log("Verkey: " + response.verkey);
-            // UnityEngine.Debug.Log("Seed: " + response.seed);
-            
-            //add arguments
-            Dictionary<string, string> arguments = new Dictionary<string, string>();
-            arguments.Add("DID", response.did);
-            arguments.Add("WALLET_NAME", name);
-            arguments.Add("LABEL", name);
-            arguments.Add("VERKEY", response.verkey);
-            arguments.Add("AGENT_WALLET_SEED", response.seed);
-            arguments.Add("WALLET_KEY", password);
-            UnityEngine.Debug.Log("DID: " + arguments["DID"]);
-            UnityEngine.Debug.Log("Verkey: " + arguments["VERKEY"]);
-            
             // Load Scene for choosing host/client
-            Loader.Load(Loader.Scene.Main);
-            StartAcaPyInstanceAsync(arguments);
+            Loader.Load(Loader.Scene.Login);
             request.Dispose();
 
         }
         else
         {
-            UnityEngine.Debug.LogError("Registration failed: " + request.error);
+            displayErrorText(request.error);
         }
     }
 
-
-    // private void RunScriptInDirectory(string directoryPath, string scriptCommand, Dictionary<string, string> arguments)
-    // {
-    //     ProcessStartInfo startInfo = new ProcessStartInfo
-    //     {
-    //         WorkingDirectory = directoryPath,
-    //         FileName = "bash",
-    //         Arguments = $"-c \"{scriptCommand}\" --label {arguments["Name"]} -it http 0.0.0.0 8001 -ot http --admin 0.0.0.0 11001 --admin-insecure-mode --genesis-url http://host.docker.internal:9000/genesis --endpoint http://localhost:8001/ --seed {arguments["Seed"]} --debug-connections --auto-provision --wallet-type indy --wallet-name {arguments["Name"]} --wallet-key {arguments["WalletSecret"]}",
-    //         RedirectStandardOutput = true,
-    //         RedirectStandardError = true,
-    //         UseShellExecute = false,
-    //         WindowStyle =  ProcessWindowStyle.Minimized,
-    //         // CreateNoWindow = true
-    //     };
-
-    //     Process process = new Process();
-    //     process.StartInfo = startInfo;
-
-    //     process.OutputDataReceived += (sender, e) =>
-    //     {
-    //         if (!string.IsNullOrEmpty(e.Data))
-    //         {
-    //             Console.WriteLine(e.Data);
-    //         }
-    //     };
-
-    //     process.ErrorDataReceived += (sender, e) =>
-    //     {
-    //         if (!string.IsNullOrEmpty(e.Data))
-    //         {
-    //             Console.WriteLine(e.Data);
-    //         }
-    //     };
-
-    //     // UnityEngine.Debug.Log("Running script now");
-
-    //     process.Start();
-    //     UnityEngine.Debug.Log("Running script now");
-    //     process.BeginOutputReadLine();
-    //     process.BeginErrorReadLine();
-    //     UnityEngine.Debug.Log(process.StartInfo);
-    //     UnityEngine.Debug.Log("Process start time:" + process.StartTime);
-    //     // process.WaitForExit();
-    // }
-
-    public async Task RunDockerComposeAsync(string composeFilePath, Dictionary<string, string> arguments)
-    {
-        Process process = new Process();
-
-        try
-        {
-            string composeFile = Path.GetDirectoryName(composeFilePath);
-            string currentScriptPath = Assembly.GetExecutingAssembly().Location; // Get the current script file path
-            string currentScriptDirectory = Path.GetDirectoryName(currentScriptPath); // Get the directory path of the current script
-            string composeFileFullPath = Path.Combine(currentScriptDirectory, composeFile); // Combine the current script directory with the relative compose file path
-            
-
-            UnityEngine.Debug.Log("Directory of composeFileFullPath: " + composeFileFullPath);
-            
-            UnityEngine.Debug.Log("Overriding env file");
-            //.env file path
-            string envFullPath = Path.Combine(composeFileFullPath, ".env");
-            UnityEngine.Debug.Log("Env path: " + envFullPath);
-
-            SaveEnvFile(envFullPath, arguments);
-            UnityEngine.Debug.Log("Override complete");
-
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.WorkingDirectory = composeFileFullPath; // Set the working directory to the current script directory
-            process.StartInfo.Arguments = $"/k docker-compose up"; // Specify the compose file and command
-    
-            // if (additionalArgs != null && additionalArgs.Length > 0)
-            // {
-            //     string argsString = string.Join(" --env ", additionalArgs);
-            //     process.StartInfo.Arguments += $" {argsString}";
-            // }
-            UnityEngine.Debug.Log("Directory of process.StartInfo.Arguments: " + process.StartInfo.Arguments);
-
-
-            process.StartInfo.UseShellExecute = true;
-
-            // TaskCompletionSource<object> processExitCompletionSource = new TaskCompletionSource<object>();
-
-            // process.Exited += (sender, e) =>
-            // {
-            //     processExitCompletionSource.TrySetResult(null);
-            // };
-
-            process.EnableRaisingEvents = true;
-            process.Start();
-
-            bool processStarted = await Task.Run(() => process.WaitForExit(Timeout.Infinite));
-            UnityEngine.Debug.Log("Process started?: " + processStarted);
-
-            // await processExitCompletionSource.Task;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error running docker-compose: {ex.Message}");
-        }
-        finally
-        {
-            process.Close();
-            process.Dispose();
-        }
+    /// <summary>
+    /// Helper function for displaying error messages
+    /// </summary>
+    /// <param name="error"></param>
+    private void displayErrorText(string error){
+        errorWindow = parentPopupWindow.transform.GetChild(6).gameObject;                
+        TMP_Text errorText = errorWindow.transform.GetChild(1).GetComponent<TMP_Text>();
+        errorText.text = error;
+        errorWindow.SetActive(true);
     }
-
-    // Function to save the dictionary as a .env file
-    void SaveEnvFile(string filePath, Dictionary<string, string> envVariables)
-    {
-        using (StreamWriter writer = new StreamWriter(filePath))
-        {
-            foreach (KeyValuePair<string, string> kvp in envVariables)
-            {
-                writer.WriteLine($"{kvp.Key}={kvp.Value}");
-            }
-        }
-    }
-
-    
-    // Function to load the contents of the .env file into a dictionary
-    Dictionary<string, string> LoadEnvFile(string filePath)
-    {
-        Dictionary<string, string> envVariables = new Dictionary<string, string>();
-
-        if (File.Exists(filePath))
-        {
-            string[] lines = File.ReadAllLines(filePath);
-
-            foreach (string line in lines)
-            {
-                string trimmedLine = line.Trim();
-
-                if (!string.IsNullOrEmpty(trimmedLine) && !trimmedLine.StartsWith("#"))
-                {
-                    int equalsIndex = trimmedLine.IndexOf('=');
-                    if (equalsIndex > 0)
-                    {
-                        string key = trimmedLine.Substring(0, equalsIndex);
-                        string value = trimmedLine.Substring(equalsIndex + 1);
-                        envVariables[key] = value;
-                    }
-                }
-            }
-        }
-
-        return envVariables;
-    }
-
-    private async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
-    {
-        // string directoryPath = "/home/aortz99/ACA-PY/aries-cloudagent-python/scripts";
-        // string scriptCommand = "./run_docker start";
-        string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
-        arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
-        arguments.Add("ACAPY_ADMIN_PORT", "11001");
-        arguments.Add("CONTROLLER_PORT", "3001");
-        arguments.Add("ACAPY_ENDPOINT_URL", "http://localhost:8002/");
-        arguments.Add("LEDGER_URL", "http://host.docker.internal:9000");
-        arguments.Add("TAILS_SERVER_URL", "http://tails-server:6543");
-        // string[] additionalArgs = { $"--WALLET_KEY={arguments["WALLET_KEY"]}", $"--LABEL={arguments["WALLET_NAME"]}", $"--WALLET_NAME={arguments["WALLET_NAME"]}", $"--AGENT_WALLET_SEED={arguments["SEED"]}", $"--ACAPY_ENDPOINT_PORT={arguments["ACAPY_ENDPOINT_PORT"]}", $"--ACAPY_ADMIN_PORT={arguments["ACAPY_ADMIN_PORT"]}", $"--CONTROLLER_PORT={arguments["CONTROLLER_PORT"]}" };
-
-        UnityEngine.Debug.Log("Starting ACA-PY instance now");
-        await RunDockerComposeAsync(composeFilePath, arguments);
-        UnityEngine.Debug.Log("Docker Compose completed.");
-        // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
-    }
-
-
 }
