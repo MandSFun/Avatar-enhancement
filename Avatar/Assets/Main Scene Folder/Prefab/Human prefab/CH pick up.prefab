@@ -831,6 +831,7 @@ GameObject:
   - component: {fileID: 143349829506510557}
   - component: {fileID: 8302934349524953237}
   - component: {fileID: 9111397821296253801}
+  - component: {fileID: 8793682441582430714}
   m_Layer: 6
   m_Name: CH pick up
   m_TagString: Player
@@ -1297,6 +1298,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 53c04f23d03a92b4fabc473f1a042911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8793682441582430714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900686166078442603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18bfb939c24a3de40ac27c2685419056, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4900686166078442622

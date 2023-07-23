@@ -209,7 +209,7 @@ namespace StarterAssets
                     {
                         Scroll();
                     }
-                    if (Input.GetButtonDown("CamToggle"))
+                    if (Input.GetKeyDown(KeyCode.C))
                     {
                         if (ThirdPersonCam.gameObject.activeSelf)
                         {

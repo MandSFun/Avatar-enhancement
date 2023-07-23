@@ -8,12 +8,12 @@ public class Shooting : MonoBehaviour
     public ParticleSystem impactEffect;
     public GameObject shootOrigin;
     float accumulatedTime;
-    bool isFiringEnabled;
+    bool SubMachineFiring;
     public int fireRate = 25;
 
     private void Update()
     {
-        if (isFiringEnabled)
+        if (SubMachineFiring)
         {
             accumulatedTime += Time.deltaTime;
             float fireInterval = 1f / fireRate;
@@ -24,19 +24,20 @@ public class Shooting : MonoBehaviour
                 accumulatedTime -= fireInterval;
             }
         }
+
+        
     }
 
     public void StartFiring()
     {
-        isFiringEnabled = true;
+        SubMachineFiring = true;
     }
 
     public void StopFiring()
     {
-        isFiringEnabled = false;
+        SubMachineFiring = false;
     }
-
-    private void Shoot()
+    public void Shoot()
     {
         foreach (var particle in muzzleflash)
         {
