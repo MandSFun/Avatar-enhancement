@@ -15,9 +15,11 @@ public class NPCpistol : MonoBehaviour
 
     [SerializeField] GameObject weaponOnHand;
     [SerializeField] private Shooting gun;
+    
+    string tag;
     private void Start()
     {
-       
+       tag   = gameObject.tag;
     }
     private void Update()
     {
@@ -30,7 +32,7 @@ public class NPCpistol : MonoBehaviour
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer))
-            {   if (hit.collider.gameObject == gameObject) // Check if the raycast hit corresponds to the current GameObject
+            {   if (hit.collider.gameObject == gameObject ) // Check if the raycast hit corresponds to the current GameObject
                 {
                 if (aimingRig.weight != 1)
                 {
@@ -38,6 +40,9 @@ public class NPCpistol : MonoBehaviour
                     StartCoroutine(AimAtTarget());
                 }
                 else StartCoroutine(StopAiming());
+                }
+                else{
+                    return;
                 }
             }
         }
