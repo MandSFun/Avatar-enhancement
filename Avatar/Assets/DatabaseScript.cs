@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mono.Data.Sqlite;
-using UnityEditorInternal.Profiling.Memory.Experimental;
-using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
 
 public class DatabaseScript : MonoBehaviour
 {

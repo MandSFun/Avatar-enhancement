@@ -150,12 +150,12 @@ namespace StarterAssets
         {  // Debug.Log(NetworkManager.Singleton.LocalClientId);
 
             //cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            if(!IsOwner)return;
+            if (!IsOwner) return;
             hasAnim = TryGetComponent(out anim);
             controller = GetComponent<CharacterController>();
             input = GetComponent<StarterAssetsInputs>();
             //playerNameText = GameObject.FindGameObjectWithTag("nop").GetComponentInChildren<TMP_Text>();
-           
+
 
             AssignAnimationIDs();
 
@@ -170,12 +170,12 @@ namespace StarterAssets
                 if (ThirdPersonCam == null && FirstPersonCam == null)
                 {
                     ThirdPersonCam = GameObject.FindGameObjectWithTag("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
-                     ThirdPersonCam.Follow = transform.GetChild(0).transform;
-                
+                    ThirdPersonCam.Follow = transform.GetChild(0).transform;
+
                     componentBase = ThirdPersonCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
                     FirstPersonCam = GameObject.FindGameObjectWithTag("FirstPersonCamera").GetComponent<CinemachineVirtualCamera>();
-                          FirstPersonCam.Follow = transform.GetChild(0).transform;
-                          FirstPersonCam.gameObject.SetActive(false);
+                    FirstPersonCam.Follow = transform.GetChild(0).transform;
+
                 }
 
 
@@ -185,7 +185,7 @@ namespace StarterAssets
 
                 }
 
-               
+
             }
 
 
@@ -199,32 +199,33 @@ namespace StarterAssets
                 if (!isDead)
                 {
                     GroundedCheck();
-                    if (PlayerInteractable.Instance.isAnimationPlaying  == false)
+                    if (PlayerInteractable.Instance.isAnimationPlaying == false)
                     {
                         JumpAndGravity();
                         Move();
                     }
-                    
+
                     if (firstpersonstatus == false)
                     {
                         Scroll();
                     }
                     if (Input.GetKeyDown(KeyCode.C))
                     {
-                        if (ThirdPersonCam.gameObject.activeSelf)
+                        if (ThirdPersonCam.Priority == 1)
                         {
+                            FirstPersonCam.Priority = 1;
+                            // FirstPersonCam.gameObject.SetActive(true);
+                            ThirdPersonCam.Priority = 0;
 
-                            FirstPersonCam.gameObject.SetActive(true);
-                            ThirdPersonCam.gameObject.SetActive(false);
                             firstpersonstatus = true;
-                        
-                            Cursor.lockState = CursorLockMode.Locked;
+
+                            // Cursor.lockState = CursorLockMode.Locked;
                         }
                         else
                         {
-                            FirstPersonCam.gameObject.SetActive(false);
-                            ThirdPersonCam.gameObject.SetActive(true);
-                            firstpersonstatus = false;
+                            FirstPersonCam.Priority = 0;
+                            // FirstPersonCam.gameObject.SetActive(true);
+                            ThirdPersonCam.Priority = 1;
                             Cursor.lockState = CursorLockMode.None;
                         }
 
