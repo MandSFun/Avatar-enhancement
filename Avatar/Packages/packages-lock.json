@@ -36,11 +36,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "1.2.4",
+      "version": "1.4.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.burst": "1.6.6",
+        "com.unity.nuget.mono-cecil": "1.11.4",
         "com.unity.test-framework": "1.1.31"
       },
       "url": "https://packages.unity.com"
@@ -107,6 +108,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.jobs": {
+      "version": "0.70.0-preview.7",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collections": "1.4.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.learn.iet-framework": {
       "version": "2.2.2",
       "depth": 1,
@@ -160,8 +170,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.mono-cecil": {
-      "version": "1.10.2",
-      "depth": 1,
+      "version": "1.11.4",
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -192,6 +202,23 @@
     "com.unity.profiling.core": {
       "version": "1.0.2",
       "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.render-pipelines.core": {
+      "version": "13.1.8",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      }
+    },
+    "com.unity.searcher": {
+      "version": "4.9.2",
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -256,6 +283,15 @@
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
+    },
+    "com.unity.shadergraph": {
+      "version": "13.1.8",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.render-pipelines.core": "13.1.8",
+        "com.unity.searcher": "4.9.2"
+      }
     },
     "com.unity.sysroot": {
       "version": "2.0.6",
@@ -343,6 +379,15 @@
       "dependencies": {
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
+      }
+    },
+    "com.unity.visualeffectgraph": {
+      "version": "13.1.8",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.shadergraph": "13.1.8",
+        "com.unity.render-pipelines.core": "13.1.8"
       }
     },
     "com.unity.visualscripting": {

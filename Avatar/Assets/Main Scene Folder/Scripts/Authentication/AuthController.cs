@@ -17,6 +17,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Data.SqlClient;
 
 
 [System.Serializable]
@@ -35,12 +36,16 @@ public class AuthController : NetworkBehaviour
     public GameObject parentPopupWindow;
     private GameObject errorWindow;
     private GameObject successfulRegistrationWindow;
-    
+    public static AuthController instance;
+    public string registeredUsername;
+    public string registeredPassword;
+
 
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
 
     private static readonly HttpClient client = new HttpClient();
+
 
     /// <summary>
     /// Starts registration workflow
@@ -183,11 +188,19 @@ public class AuthController : NetworkBehaviour
             successfulRegistrationWindow = parentPopupWindow.transform.GetChild(7).gameObject;                
             TMP_Text successText = successfulRegistrationWindow.transform.GetChild(1).GetComponent<TMP_Text>();
             successText.text = "Registration successful!";
+            
             successfulRegistrationWindow.SetActive(true);
             // Debug.Log(request.downloadHandler.text);
             var response = JsonUtility.FromJson<JsonData>(httpRequest.webRequest.downloadHandler.text);
-            
+
+
+            //create new SQL server login for the new user
+            registeredUsername = name;
+            registeredPassword = password;
+            CreateNewUserAccount(registeredUsername, registeredUsername);
+
             // Load Scene for choosing host/client
+
             Loader.Load(Loader.Scene.Login);
             request.Dispose();
 
@@ -207,5 +220,48 @@ public class AuthController : NetworkBehaviour
         TMP_Text errorText = errorWindow.transform.GetChild(1).GetComponent<TMP_Text>();
         errorText.text = error;
         errorWindow.SetActive(true);
+    }
+
+    public void CreateNewUserAccount(string username, string password)
+    {
+        string DBname = "AvatarProject";
+        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
+        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
+
+                connection.Open();
+                
+
+                using (var command = connection.CreateCommand())
+                {
+                    /*
+                     * CREATE LOGIN user1234 WITH PASSWORD = 'password';
+                        USE AvatarProject; CREATE USER user1234 FOR LOGIN user1234;
+                        USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO user1234;
+
+                     * 
+                     */
+
+                    command.CommandText = "CREATE LOGIN " + username + " WITH PASSWORD = '" + password + "'; " +
+                        "USE " + DBname + "; CREATE USER " + username + " FOR LOGIN " + username + "; " +
+                        "USE " + DBname + "; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "; ";
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL server) Error creating new account");
+            
+        }
+
     }
 }

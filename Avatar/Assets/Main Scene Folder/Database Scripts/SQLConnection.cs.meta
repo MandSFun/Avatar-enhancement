@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 39f3b75607b67eb46b2b4ca1b3315710
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Ak47Item: {fileID: 11400000, guid: 9ce89312de1b8ec498db04c649d364ba, type: 2}
+  - dynamiteItem: {fileID: 11400000, guid: dd122243760acaf448c1b9ee525f0733, type: 2}
+  - M4Item: {fileID: 11400000, guid: 00844f81f55bf484da817b6b57d87035, type: 2}
+  - SMGItem: {fileID: 11400000, guid: 8251366feea092e47a450fbf675a1f1d, type: 2}
+  - smokeGrenadeItem: {fileID: 11400000, guid: dd9259f9f5f327249985d6a49e884866, type: 2}
+  - grenadeItem: {fileID: 11400000, guid: df70229a2535fd149a3b26f3fae9c138, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -10,7 +10,7 @@ using TMPro;
 public class NetworkManagerUI : NetworkBehaviour
 {
 
-    public int playerID;
+    
     public static NetworkManagerUI instance;
 
     [SerializeField] private TMP_InputField passwordInputField;
@@ -78,9 +78,9 @@ public class NetworkManagerUI : NetworkBehaviour
         }
         else
         {
-            playerID = nameInputField.text.GetHashCode();
+            
             NetworkManager.Singleton.StartClient();
-            Debug.Log("ATTENTION hash code is " + playerID);
+            
         }
 
     }
@@ -99,8 +99,7 @@ public class NetworkManagerUI : NetworkBehaviour
         }
         else
         {
-            playerID = nameInputField.text.GetHashCode();
-            Debug.Log("ATTENTION hash code is " + playerID);
+            
             NetworkManager.Singleton.StartHost();
         }
         //setPassword(passwordInputField.text);

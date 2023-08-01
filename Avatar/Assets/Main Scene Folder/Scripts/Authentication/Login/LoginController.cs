@@ -30,6 +30,15 @@ public class LoginController : MonoBehaviour
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
     private static readonly HttpClient client = new HttpClient();
+    public static LoginController Instance;
+    public string verifiedUsername;
+    public string verifiedPassword;
+
+
+    public void Awake()
+    {
+        Instance = this;
+    }
 
     /// <summary>
     /// Starts coroutine to check if player is registered on the blockchain
@@ -182,7 +191,11 @@ public class LoginController : MonoBehaviour
             arguments.Add("WALLET_KEY", password);
             UnityEngine.Debug.Log("DID: " + arguments["DID"]);
             UnityEngine.Debug.Log("Verkey: " + arguments["VERKEY"]);
-            
+
+            //configure the SQL server account as the user
+            verifiedUsername = name;
+            verifiedPassword = password;
+
             // Load Scene for choosing host/client
             Loader.Load(Loader.Scene.Main);
             StartAcaPyInstanceAsync(arguments);

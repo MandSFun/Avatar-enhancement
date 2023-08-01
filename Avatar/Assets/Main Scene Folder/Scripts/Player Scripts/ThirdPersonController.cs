@@ -29,6 +29,7 @@ namespace StarterAssets
         [Range(0.0f, 0.3f)]
         [SerializeField] private float RotationSmoothTime = 0.1f;
         [SerializeField] private float SpeedChangeRate = 10.0f;
+        public GameObject inventorySlots; 
 
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
@@ -263,6 +264,8 @@ namespace StarterAssets
                 playerInput = GetComponent<PlayerInput>();
                 playerInput.enabled = true;
                 //FirstPersonCam.gameObject.SetActive(false);
+                InventoryBottomSlotController.instance.ActivateInventorySlots(true);
+                Debug.Log("Activated bottom slots");
 
             }
         }

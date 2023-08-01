@@ -924,6 +924,7 @@ MonoBehaviour:
   RotationSpeed: 0.5
   RotationSmoothTime: 0.12
   SpeedChangeRate: 10
+  inventorySlots: {fileID: 0}
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
   FootstepAudioClips:
   - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
@@ -1272,10 +1273,15 @@ MonoBehaviour:
   myHands: {fileID: 4900686166078442691}
   hasItem: 0
   dynamiteItem: {fileID: 11400000, guid: dd122243760acaf448c1b9ee525f0733, type: 2}
+  smokeGrenadeItem: {fileID: 11400000, guid: dd9259f9f5f327249985d6a49e884866, type: 2}
+  grenadeItem: {fileID: 11400000, guid: df70229a2535fd149a3b26f3fae9c138, type: 2}
   aimCam: {fileID: 0}
-  newDynamiteItem: {fileID: 7110251769517384457, guid: 334769f5344d9a546bb3e4e05a498e1d, type: 3}
-  newAk47Item: {fileID: 8533659323394300343, guid: ecb35b5db372f864fa34b8780e260cce, type: 3}
+  newDynamiteObj: {fileID: 7110251769517384457, guid: 334769f5344d9a546bb3e4e05a498e1d, type: 3}
+  newSmokeGrenadeObj: {fileID: 113076777504956686, guid: 63f22b57e3d9138478f409ca5e8fa6f7, type: 3}
+  newAk47Obj: {fileID: 6918189679785278061, guid: 1c0ed14826a95d4428c81879a1a3f35c, type: 3}
+  newGrenadeObj: {fileID: 5349320068034011564, guid: 862c2899134a4d349938e7d4b8091e42, type: 3}
   playerID: 0
+  currItem: {fileID: 0}
 --- !u!114 &8302934349524953237
 MonoBehaviour:
   m_ObjectHideFlags: 0

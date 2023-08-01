@@ -25,6 +25,8 @@ TagManager:
   - road
   - Car
   - NPC
+  - PickableObject
+  - BottomInventorySlot
   layers:
   - Default
   - TransparentFX
