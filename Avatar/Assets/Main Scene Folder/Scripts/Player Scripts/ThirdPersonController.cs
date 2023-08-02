@@ -228,6 +228,7 @@ namespace StarterAssets
                             // FirstPersonCam.gameObject.SetActive(true);
                             ThirdPersonCam.Priority = 1;
                             Cursor.lockState = CursorLockMode.None;
+                              firstpersonstatus = false;
                         }
 
 

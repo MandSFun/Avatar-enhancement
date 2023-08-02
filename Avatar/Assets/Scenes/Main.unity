@@ -4118,6 +4118,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2070925442191277752, guid: ee4a954ea68905648b4b3bf998fc016a, type: 3}
+      propertyPath: CameraSide
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: ee4a954ea68905648b4b3bf998fc016a, type: 3}
@@ -10112,6 +10116,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 290309595257576489, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
       propertyPath: m_UpdateMethod
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 290309595257576489, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
+      propertyPath: m_DefaultBlend.m_Time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 290309595257576489, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
+      propertyPath: m_DefaultBlend.m_Style
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 421325201500217393, guid: e005c5c7872978746bf06ccde1aad2e8, type: 3}
