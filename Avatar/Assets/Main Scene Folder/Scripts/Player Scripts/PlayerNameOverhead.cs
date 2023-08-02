@@ -15,7 +15,7 @@ public class PlayerNameOverhead : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
+        if (IsOwner)
         {
             playerNetworkName.Value = $"Player {OwnerClientId}";
         }

@@ -46,7 +46,7 @@ public static class Loader
             if (loadingAsyncOperation.progress >= 0.9f)
             {
                 //Wait to you press the space key to activate the Scene
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+               // if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
                     //Activate the Scene
                     loadingAsyncOperation.allowSceneActivation = true;
             }
