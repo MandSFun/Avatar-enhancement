@@ -9,4 +9,9 @@ public class ChatMessage : MonoBehaviour
 
     public void SetText(string str)
     { messageText.text = str; }
+
+    public void SetMessage(ulong playerID, string message)
+    {
+        messageText.text = $"<color=grey>Player {playerID}</color>: {message}";
+    }
 }

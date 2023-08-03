@@ -53,6 +53,9 @@ sharedassets0.assets
 sharedassets0.assets.resS
 
 ```
+### Setting up of blockchain technology
+
+Refer to [Here](https://equinox-sawfish-01c.notion.site/How-to-set-up-Blockchain-ff080acd6d4f4bdb8453987feac23de9?pvs=4) 
 ### Import and Export of package files
 To export specific files from the project clone,ensure the project importing the files has the following references.
 ```

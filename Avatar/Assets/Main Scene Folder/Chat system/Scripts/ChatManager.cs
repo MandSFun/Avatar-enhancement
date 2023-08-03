@@ -11,55 +11,54 @@ public class ChatManager : NetworkBehaviour
     [SerializeField] ChatMessage chatMessagePrefab;
     [SerializeField] CanvasGroup chatContent;
     [SerializeField] TMP_InputField chatInput;
-    void Awake() 
-    { ChatManager.Singleton = this; }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        string message ="Player "+OwnerClientId+" has joined.";
-        SendChatMessageServerRpc(message);
+        string message ="Player "+NetworkManager.Singleton.LocalClientId+" has joined.";
+        SendChatMessageServerRpc(message,NetworkManager.Singleton.LocalClientId);
         
 
     }
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
-        string message ="Player "+OwnerClientId+" has left.";
-        SendChatMessageServerRpc(message);
+        string message ="Player "+NetworkManager.Singleton.LocalClientId+" has left.";
+        SendChatMessageServerRpc(message,NetworkManager.Singleton.LocalClientId);
     }
     void Update() 
     {
         if(Input.GetKeyDown(KeyCode.Return))
         {
-            SendChatMessage(chatInput.text, NetworkManager.Singleton.LocalClientId );
+            SendChatMessage(chatInput.text );
             chatInput.text = "";
         }
     }
 
-    public void SendChatMessage(string _message, ulong _fromWho)
+    public void SendChatMessage(string _message)
     { 
         if(string.IsNullOrWhiteSpace(_message)) return;
 
-        string S = "Player " + _fromWho + " > " +  _message;
-        SendChatMessageServerRpc(S); 
+        //string S = "Player " + NetworkManager.Singleton.LocalClientId + " > " +  _message;
+        SendChatMessageServerRpc(_message,NetworkManager.Singleton.LocalClientId); 
     }
    
-    void AddMessage(string msg)
+    void AddMessage(string msg,ulong senderID)
     {
         ChatMessage CM = Instantiate(chatMessagePrefab, chatContent.transform);
-        CM.SetText(msg);
+        CM.SetMessage(senderID,msg);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SendChatMessageServerRpc(string message)
+    void SendChatMessageServerRpc(string message,ulong senderID)
     {
-        ReceiveChatMessageClientRpc(message);
+        ReceiveChatMessageClientRpc(message,senderID);
     }
 
     [ClientRpc]
-    void ReceiveChatMessageClientRpc(string message)
+    void ReceiveChatMessageClientRpc(string message,ulong senderID)
     {
-        ChatManager.Singleton.AddMessage(message);
+        //ChatManager.Singleton.AddMessage(message,senderID);
+        AddMessage(message,senderID);
     }
 }
