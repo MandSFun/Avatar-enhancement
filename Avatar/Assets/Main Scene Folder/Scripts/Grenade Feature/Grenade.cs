@@ -18,7 +18,6 @@ public class Grenade : MonoBehaviour
     void Start()
     {
         countdown = delay;
-       
     }
 
     // Update is called once per frame

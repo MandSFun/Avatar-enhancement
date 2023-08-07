@@ -18,7 +18,7 @@ using TMPro;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
-
+using System.Net;
 
 [System.Serializable]
 public class JsonData
@@ -29,7 +29,8 @@ public class JsonData
 }
 
 public class AuthController : NetworkBehaviour
-{ 
+{
+    [SerializeField] private TMP_InputField IPAddressInputField;
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_Dropdown dropDown;
@@ -39,13 +40,21 @@ public class AuthController : NetworkBehaviour
     public static AuthController instance;
     public string registeredUsername;
     public string registeredPassword;
-
+    public string IPAddress;
 
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
 
     private static readonly HttpClient client = new HttpClient();
-
+    
+    private void Awake()
+    {
+        instance = this;
+        string hostName = Dns.GetHostName();
+        IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+        IPAddressInputField.text = IPAddress;
+        DontDestroyOnLoad(gameObject);
+    }
 
     /// <summary>
     /// Starts registration workflow
@@ -56,6 +65,7 @@ public class AuthController : NetworkBehaviour
         string name = nameInputField.text;
         string password = passwordInputField.text;
         string role = dropDown.captionText.text;
+        IPAddress = IPAddressInputField.text;
 
         //Check that name is not already on the blockchain
         StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
@@ -229,7 +239,7 @@ public class AuthController : NetworkBehaviour
     {
        
         string DBname = "AvatarProject";
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+        string connstring = "Data Source=" + IPAddress + " ;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
         try
         {

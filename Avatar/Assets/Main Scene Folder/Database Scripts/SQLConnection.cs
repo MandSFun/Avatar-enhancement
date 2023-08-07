@@ -27,20 +27,25 @@ public class SQLConnection : MonoBehaviour
     [SerializeField] Sprite NewtorkStatusIcon;
     public string adminConString;
     public string userConString;
+    public string IPAddress;
     void Start()
     {
         //get IP address of computer
-
-        string host = Dns.GetHostName();
-
-        // Getting ip address using host name
-        IPHostEntry ip = Dns.GetHostEntry(host);
-        Debug.Log("IP address of this machine is: " + ip.AddressList[0].ToString());
+        if (LoginController.Instance.IPAddress != null)
+        {
+            IPAddress = LoginController.Instance.IPAddress;
+        }
+        else
+        {
+            string hostName = Dns.GetHostName();
+            IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+        }
+        
 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        adminConString = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+        adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         SqlConnection con = new SqlConnection(adminConString);
         try {
             CreateNewDB();
@@ -66,7 +71,7 @@ public class SQLConnection : MonoBehaviour
 
     public void ConfigureUserConnectionString(string username, string password)
     {
-        userConString = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=" + username + ";Password=" + password +";";
+        userConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=" + username + ";Password=" + password +";";
     }
 
     public void TestConnection()
@@ -176,7 +181,7 @@ public class SQLConnection : MonoBehaviour
     }
     public void CreateNewDB()
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=master;User ID=sa;Password=D5taCard;";
+        string connstring = "Data Source="+ IPAddress +";Initial Catalog=master;User ID=sa;Password=D5taCard;";
         try
         {
             using (SqlConnection connection = new SqlConnection(connstring))
@@ -218,7 +223,7 @@ public class SQLConnection : MonoBehaviour
 
     public void AddWeapon(int playerID, int weaponid, int quantity)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=master;User ID=SuperAdmin;Password=SuperAdmin;"; 
+        //string connstring = "Data Source=10.255.253.29;Initial Catalog=master;User ID=SuperAdmin;Password=SuperAdmin;"; 
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
 
@@ -251,7 +256,7 @@ public class SQLConnection : MonoBehaviour
 
     public void RemoveWeapon(int playerID, int weaponid, int quantity)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
+        //string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
 
@@ -288,7 +293,7 @@ public class SQLConnection : MonoBehaviour
 
     public void UpdatePlayerLocation(int playerID, int x, int y, int z)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
+        //string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;"; 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         bool dataFound = false;
@@ -358,7 +363,7 @@ public class SQLConnection : MonoBehaviour
 
     public Item[] GetStartingItems(int playerID)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
+        //string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;"; 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         List<Item> items = new List<Item>();
@@ -425,7 +430,7 @@ public class SQLConnection : MonoBehaviour
 
     public int[] getStartingLocation(int playerID)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
+        //string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;"; 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         int[] startingCoordinates = new int[3];

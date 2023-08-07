@@ -17,10 +17,11 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using System.Net;
 
 public class LoginController : MonoBehaviour
 {
+    [SerializeField] private TMP_InputField IPAddressInputField;
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
 
@@ -33,11 +34,31 @@ public class LoginController : MonoBehaviour
     public static LoginController Instance;
     public string verifiedUsername;
     public string verifiedPassword;
+    public string IPAddress;
+  
+
 
 
     public void Awake()
     {
         Instance = this;
+
+        try
+        {
+            IPAddress = AuthController.instance.IPAddress;
+            IPAddressInputField.text = AuthController.instance.IPAddress;
+            nameInputField.text = AuthController.instance.registeredUsername;  
+        }
+        catch (Exception ex)
+        {
+            string hostName = Dns.GetHostName();
+            IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+            IPAddressInputField.text = IPAddress;
+        }
+
+        DontDestroyOnLoad(gameObject);
+
+
     }
 
     /// <summary>
@@ -49,6 +70,7 @@ public class LoginController : MonoBehaviour
         //Get name and password from input fields
         string name = nameInputField.text;
         string password = passwordInputField.text;
+        IPAddress = IPAddressInputField.text;
 
         //Add check that name is not already on the blockchain
         StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl)); 

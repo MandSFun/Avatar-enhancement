@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.Rendering;
+using System.Net;
+using System;
 
 public class CameraFirstPerson : MonoBehaviour
 {[SerializeField] private float sensitivity = 50f;
@@ -19,6 +21,7 @@ public class CameraFirstPerson : MonoBehaviour
 
     void Update()
     {
+        
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
