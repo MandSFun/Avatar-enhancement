@@ -5,7 +5,9 @@ using System.Data.SqlClient;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Net;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
 
 
 public class SQLConnection : MonoBehaviour
@@ -21,26 +23,32 @@ public class SQLConnection : MonoBehaviour
     [SerializeField] private Item SMGItem;
     [SerializeField] private Item smokeGrenadeItem;
     [SerializeField] private Item grenadeItem;
+    [SerializeField] private Item backpackItem;
     [SerializeField] Sprite NewtorkStatusIcon;
     public string adminConString;
     public string userConString;
     void Start()
     {
-        //create the table
+        //get IP address of computer
 
+        string host = Dns.GetHostName();
 
+        // Getting ip address using host name
+        IPHostEntry ip = Dns.GetHostEntry(host);
+        Debug.Log("IP address of this machine is: " + ip.AddressList[0].ToString());
 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        adminConString = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
+        adminConString = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         SqlConnection con = new SqlConnection(adminConString);
         try {
+            CreateNewDB();
             con.Open();
             Debug.Log("SQL server connection successful!");
             SQLServerConnected = true;
             CreateDB(adminConString);
-
+            ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
             //DisplayWeapons();
 
             con.Close();
@@ -51,7 +59,7 @@ public class SQLConnection : MonoBehaviour
             SQLServerConnected = false;
         }
 
-        ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
+       
 
 
     }
@@ -166,11 +174,51 @@ public class SQLConnection : MonoBehaviour
         }
         
     }
+    public void CreateNewDB()
+    {
+        string connstring = "Data Source=10.255.253.29;Initial Catalog=master;User ID=sa;Password=D5taCard;";
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
 
+                connection.Open();
+
+
+                using (var command = connection.CreateCommand())
+                {
+                    /*
+                     *  IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'DataBase')
+                        BEGIN
+                             CREATE DATABASE [DataBase]
+
+
+                            END
+
+                     * 
+                     */
+
+                    command.CommandText = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'AvatarProject')     " +
+                        "BEGIN  CREATE DATABASE AvatarProject  END";
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL server) Error creating AvatarProject DB");
+
+        }
+    }
 
     public void AddWeapon(int playerID, int weaponid, int quantity)
     {
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;"; 
+        string connstring = "Data Source=10.255.253.29;Initial Catalog=master;User ID=SuperAdmin;Password=SuperAdmin;"; 
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
 
@@ -291,7 +339,9 @@ public class SQLConnection : MonoBehaviour
                     }
                     else if (!dataFound)
                     {
-                        command.CommandText = "INSERT INTO playerlocation (playerid,x,y,z) VALUES (" + playerID + "," + x + "," + y + "," + z + ");";
+                        command.CommandText = "INSERT INTO playerlocation (playerid,x,y,z) VALUES (" + playerID + "," + x + "," + y + "," + z + "); " +
+                            "INSERT INTO weapons(playerid, weaponid, quantity) VALUES( " + playerID + ",7,1);";
+                            
                         command.ExecuteNonQuery();
                     }
                 }
@@ -321,6 +371,25 @@ public class SQLConnection : MonoBehaviour
 
                 connection.Open();
                 SQLServerConnected = true;
+                /*
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM weapons WHERE playerid = " + playerID + "AND weaponid = 7;";
+
+                    using (System.Data.IDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader["playerID"] == null)
+                            {
+                                AddWeapon(playerID, 7, 1);
+                            }
+
+                        }
+                        reader.Close();
+                    }
+                }
+                */
 
                 using (var command = connection.CreateCommand())
                 {
@@ -425,6 +494,9 @@ public class SQLConnection : MonoBehaviour
                 break;
             case 6:
                 newItem = grenadeItem;
+                break;
+            case 7:
+                newItem = backpackItem;
                 break;
         }
         return newItem;

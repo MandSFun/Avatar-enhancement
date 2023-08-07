@@ -5,17 +5,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PickableItemScript : MonoBehaviour
 {
     public GameObject myHands; //reference to your hands/the position where you want your object to go
     bool canpickup; //a bool to see if you can or cant pick up the item
     GameObject objectToPickUp; // the gameobject onwhich you collided with
+    GameObject collidedObject;
     public bool hasItem; // a bool to see if you have an item in your hand
     public static PickableItemScript instance;
     [SerializeField] private Item dynamiteItem;
     [SerializeField] private Item smokeGrenadeItem;
     [SerializeField] private Item grenadeItem;
+    [SerializeField] private Item backpackItem;
 
     [SerializeField] Camera aimCam;
 
@@ -40,7 +43,15 @@ public class PickableItemScript : MonoBehaviour
         canpickup = false;    //setting both to false
         hasItem = false;
         animator = GetComponent<Animator>();
-        playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        try
+        {
+            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        }
+        catch (System.Exception e)
+        {
+            playerID = NetworkManagerUI.instance.localPlayerID;
+            Debug.Log("Unable to get playerID from SQL Server. Using default playerID from local username: " + playerID);
+        }
 
     }
 
@@ -48,7 +59,7 @@ public class PickableItemScript : MonoBehaviour
     void Update()
     {
         
-
+        
         if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Pickup") || this.animator.GetCurrentAnimatorStateInfo(0).IsName("Throw"))
         {
             isPlayingAnimation = true;
@@ -61,6 +72,11 @@ public class PickableItemScript : MonoBehaviour
         
         ActivatePlayerAction();
         UpdatePlayerHeldItem();
+        if (collidedObject != null && collidedObject.tag == "MiniGameTrigger" && Input.GetKeyDown(KeyCode.Return))
+        {
+            SceneManager.LoadScene("Shooting Game");
+        }
+        //Debug.Log(collidedObject.tag);
 
     }
 
@@ -70,7 +86,11 @@ public class PickableItemScript : MonoBehaviour
         //Debug.Log("object to pick = " + objectToPickUp + " and the object held = " + currentHeldObject);
 
         //pick the object
-        if (!isPlayingAnimation && canpickup == true && Input.GetKeyDown(KeyCode.F) && currentHeldObject != objectToPickUp) // if you enter thecollider of the object and press F
+        if (!isPlayingAnimation && canpickup == true 
+            && Input.GetKeyDown(KeyCode.F) 
+            && currentHeldObject != objectToPickUp
+            && !isHoldingInteractableObject()) // if you enter thecollider of the object and press F
+
         {
             PlayerInteractable.Instance.SetHasWeaponFalse();
             canpickup = false;
@@ -119,9 +139,15 @@ public class PickableItemScript : MonoBehaviour
 
     private void UpdatePlayerHeldItem()
     {
+       
         if (InventoryManager.instance.GetSelectedItem(false) == null) // character has not selected anything
         {
             RemovePlayerHeldItem();
+        }
+        else if (InventoryManager.instance.GetSelectedItem(false).name == "Backpack")
+        {
+            //trigger inventory menu
+            InventoryManager.instance.backpackScreen.SetActive(true);
         }
         //character has chosen another object
         else if (hasItem && InventoryManager.instance.GetSelectedItem(false) != currItem)
@@ -141,11 +167,11 @@ public class PickableItemScript : MonoBehaviour
 
     private void RemovePlayerHeldItem()
     {
+        InventoryManager.instance.backpackScreen.SetActive(false);
         hasItem = false;
         //Debug.Log("Player not holding anything");
         //delete the gameobject that is in the players hands
-        
-        
+
         if (PlayerInteractable.Instance.hasWeapon)
         {
             PlayerInteractable.Instance.SetHasWeaponFalse();
@@ -182,6 +208,7 @@ public class PickableItemScript : MonoBehaviour
 
     private void SpawnNewPlayerItem()
     {
+        InventoryManager.instance.backpackScreen.SetActive(false);
         Item item = InventoryManager.instance.GetSelectedItem(false); 
         try
         {
@@ -249,17 +276,23 @@ public class PickableItemScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) // to see when the player enters the collider
     {
-         Debug.Log("Picakable object found" + other);
+         Debug.Log("Collided with " + other.gameObject);
         if (other.gameObject.tag == "PickableObject") //on the object you want to pick up set the tag to be anything, in this case "object"
         {
+            Debug.Log("Picakable object found" + other);
             canpickup = true;  //set the pick up bool to true
             objectToPickUp = other.gameObject; //set the gameobject you collided with to one you can reference
                                                //  Debug.Log("Picakable object found");
         }
+        collidedObject = other.gameObject;
+
+        //open mini game scene
+        
     }
     private void OnTriggerExit(Collider other)
     {
         canpickup = false; //when you leave the collider set the canpickup bool to false
+        collidedObject = null;
 
     }
 
@@ -346,6 +379,19 @@ public class PickableItemScript : MonoBehaviour
             if (t.CompareTag(tag)) return t;
         }
         return null;
+    }
+
+    public bool isHoldingInteractableObject()
+    {
+        if (InventoryManager.instance.GetSelectedItem(false) == null)
+        {
+            return false;
+        }
+        else if (InventoryManager.instance.GetSelectedItem(false).name == "AK47")
+        {
+            return true;
+        }
+        return false;
     }
 
 

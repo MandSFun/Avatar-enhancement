@@ -125,7 +125,16 @@ public class PlayerInteractable : NetworkBehaviour
 
     private void AddItemToInventory(string weaponIdentifier)
     {
-        int playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        int playerID;
+        try
+        {
+            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        }
+        catch (System.Exception e)
+        {
+            playerID = NetworkManagerUI.instance.localPlayerID;
+            Debug.Log("Unable to get playerID from SQL Server. Using default playerID from local username: " + playerID);
+        }
         if (weaponIdentifier == "AK47")
         {
             InventoryManager.instance.AddItem(itemAK47, true, playerID);

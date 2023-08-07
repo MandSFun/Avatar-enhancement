@@ -12,8 +12,6 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
-		public bool aim;
-		public bool fps;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -45,14 +43,6 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
-		public void OnAim(InputValue value)
-		{
-			AimInput(value.isPressed);
-		}
-		public void Firstperson(InputValue value)
-		{
-			FpsInput(value.isPressed);
-		}
 #endif
 
 
@@ -75,14 +65,7 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
-		public void AimInput(bool newAimState)
-		{
-			aim = newAimState;
-		}
-		public void FpsInput(bool newFpsState)
-		{
-			fps = newFpsState;
-		}
+		
 		private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);

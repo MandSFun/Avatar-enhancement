@@ -1,21 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class InventoryUpdateScript : MonoBehaviour
 {
+
+    [SerializeField] Item backpackItem; 
     // Start is called before the first frame update
     void Start()
     {
-        int playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        int playerID;
+        try
+        {
+            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        }
+        catch (System.Exception e)
+        {
+            playerID = NetworkManagerUI.instance.localPlayerID;
+            Debug.Log("Unable to get playerID from SQL Server. Using default playerID from local username: " + playerID);
+        }
+
         Item[] startingItems = DatabaseScript.instance.GetStartingItems(playerID);
         if (SQLConnection.instance.SQLServerConnected)
         {
             startingItems = SQLConnection.instance.GetStartingItems(playerID);
             Debug.Log("Successfully loaded data from SQL server");
         }
-          
-
+        //add the backpack item 
+        InventoryManager.instance.AddItem(backpackItem, false, playerID);
         foreach (var item in startingItems)
         {
             InventoryManager.instance.AddItem(item, false, playerID);

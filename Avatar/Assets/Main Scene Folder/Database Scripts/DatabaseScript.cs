@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mono.Data.Sqlite;
+using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
 
 public class DatabaseScript : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class DatabaseScript : MonoBehaviour
     [SerializeField] private Item SMGItem;
     [SerializeField] private Item smokeGrenadeItem;
     [SerializeField] private Item grenadeItem;
-    
+    [SerializeField] private Item backpackItem;
+
 
     private void Awake()
     {
@@ -200,11 +202,32 @@ public class DatabaseScript : MonoBehaviour
         {
 
             connection.Open();
+            /*
+            using (var command = connection.CreateCommand())
+            {
+
+                
+                command.CommandText = "SELECT * FROM weapons WHERE playerid = " + playerID + "AND weaponid = 7;";
+
+                using (System.Data.IDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["playerID"] == null)
+                        {
+                            AddWeapon(playerID, 7, 1);
+                        }
+
+                    }
+                    reader.Close();
+                }
+            }
+            */
 
 
             using (var command = connection.CreateCommand())
             {
-
+                
                 command.CommandText = "SELECT * FROM weapons WHERE playerid =" + playerID + ";";
 
                 using (System.Data.IDataReader reader = command.ExecuteReader())

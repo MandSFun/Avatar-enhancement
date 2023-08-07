@@ -20,6 +20,7 @@ RUN cd /aries-cloudagent-python && \
     pip3 install -r requirements.indy.txt && \
     pip3 install --no-cache-dir -e .
 
+
 # Add docker-compose-wait tool
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
 RUN chmod +x /wait

@@ -9,14 +9,14 @@ public class InventoryManager : MonoBehaviour
 {
 
     public static InventoryManager instance;
-    
     public InventorySlot[] inventorySlots;
     public int maxStackedItems = 10;
     public GameObject inventoryItemPrefab;
     public Item selectedItem;
     public List<GameObject> hiddenInventoryBackpackItems;
     public int playerID = -1;
-    
+    [SerializeField] public GameObject backpackScreen;
+
     int selectedSlot = 0;
 
 
@@ -28,7 +28,17 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
-        playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        instance = this;
+        try
+        {
+            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        }
+        catch(System.Exception e)
+        {
+            playerID = NetworkManagerUI.instance.localPlayerID;
+            Debug.Log("Unable to get playerID from SQL Server. Using default playerID from local username: " +playerID);
+        }
+        
         //Debug.Log("inveotry playerid is   " + playerID);
         
     }
@@ -51,6 +61,15 @@ public class InventoryManager : MonoBehaviour
 
             ChangeSelectedSlot(selectedSlot + 1);
             selectedItem = GetSelectedItem(false);
+        }
+
+        if (selectedItem != null && selectedItem.name == "Backpack")
+        {
+            backpackScreen.SetActive(true);
+        }
+        else
+        {
+            backpackScreen.SetActive(false);
         }
 
 
@@ -77,8 +96,16 @@ public class InventoryManager : MonoBehaviour
                 {
                     itemInSlot.RefreshCount();
                 }
-                int weaponID = ItemToHash(item); 
-                int playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+                int weaponID = ItemToHash(item);
+                try
+                {
+                    playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+                }
+                catch (System.Exception e)
+                {
+                    playerID = NetworkManagerUI.instance.localPlayerID;
+                    Debug.Log("Unable to get playerID from SQL Server. Using default playerID from local username: " + playerID);
+                }
                 DatabaseScript.instance.RemoveWeapon(playerID, weaponID, 1);
                 if (SQLConnection.instance.SQLServerConnected)
                     SQLConnection.instance.RemoveWeapon(playerID, weaponID, 1);
@@ -180,6 +207,9 @@ public class InventoryManager : MonoBehaviour
                 break;
             case "Grenade":
                 weaponID = 6;
+                break;
+            case "Backpack":
+                weaponID = 7;
                 break;
 
 

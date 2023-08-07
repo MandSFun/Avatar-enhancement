@@ -50,7 +50,23 @@ services:
     ]
     # --wallet-storage-config '{\"url\":\"db:5432\",\"max_connections\":5}'
     # --wallet-storage-creds '{\"account\":\"postgres\",\"password\":\"password\",\"admin_account\":\"postgres\",\"admin_password\":\"password\"}'
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    networks:
+      - von
+    environment:
+      SA_PASSWORD: D5taCard  # Set a strong password for the SA (System Administrator) account
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./var/opt/mssql
+      - ./init:/docker-entrypoint-initdb.d
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+     # - {host_data_path}:/var/opt/mssql  # Replace {host_data_path} with the path on the host machine to persist data
+     
   db:
     image: postgres:latest
     hostname: db

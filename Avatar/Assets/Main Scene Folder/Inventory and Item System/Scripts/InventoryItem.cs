@@ -27,7 +27,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IEndDragHandler, 
     {
         item = newItem;
         image.sprite = newItem.image;
-        image.preserveAspect = true;
+        image.preserveAspect = true ;
         RefreshCount();
     }
     public void OnBeginDrag(PointerEventData eventData)

@@ -26,6 +26,7 @@ public class NetworkManagerUI : NetworkBehaviour
 
     public PlayerNameOverhead GetPlayerObj(ulong id) => NetworkManager.Singleton.ConnectedClients[id].PlayerObject.GetComponent<PlayerNameOverhead>();
     public NetworkManager network;
+    public int localPlayerID;
     public ulong LocalId => network.LocalClient.ClientId;
     // Start is called before the first frame update
 
@@ -95,7 +96,9 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             nameInputField.Select();
             nameInputField.ActivateInputField();
-            
+            localPlayerID = nameInputField.text.GetHashCode();
+
+
         }
         else
         {

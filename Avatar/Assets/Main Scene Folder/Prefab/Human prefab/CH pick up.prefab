@@ -1275,6 +1275,7 @@ MonoBehaviour:
   dynamiteItem: {fileID: 11400000, guid: dd122243760acaf448c1b9ee525f0733, type: 2}
   smokeGrenadeItem: {fileID: 11400000, guid: dd9259f9f5f327249985d6a49e884866, type: 2}
   grenadeItem: {fileID: 11400000, guid: df70229a2535fd149a3b26f3fae9c138, type: 2}
+  backpackItem: {fileID: 11400000, guid: e6eb453579f598d4996e747ddbd5774c, type: 2}
   aimCam: {fileID: 0}
   newDynamiteObj: {fileID: 7110251769517384457, guid: 334769f5344d9a546bb3e4e05a498e1d, type: 3}
   newSmokeGrenadeObj: {fileID: 113076777504956686, guid: 63f22b57e3d9138478f409ca5e8fa6f7, type: 3}
@@ -1307,6 +1308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53c04f23d03a92b4fabc473f1a042911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backpackItem: {fileID: 11400000, guid: e6eb453579f598d4996e747ddbd5774c, type: 2}
 --- !u!114 &8793682441582430714
 MonoBehaviour:
   m_ObjectHideFlags: 0

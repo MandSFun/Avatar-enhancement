@@ -28,12 +28,15 @@ Special thanks to our advisors and mentors for their valuable guidance and suppo
 
 ## Installation
 
+**Refer to the Installation guide [here](https://quill-carriage-fc8.notion.site/Avatar-Project-Installation-Guide-6158f3a430fb4f3b88495f2bebacaef4?pvs=4) for specific step-by-step instructions.**
+
+
 To set up the framework and libraries for this project, follow these steps:
 
-1. Install Unity.
-2. Install .NET Framework.
-3. Install .NET SDK.
-4. Install Visual Studio Code.
+1. Install .NET Framework.
+2. Install .NET SDK.
+3. Install Visual Studio Code.
+
 
 ### Setup
 To clone this repository, use the following command:

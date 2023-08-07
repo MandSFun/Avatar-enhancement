@@ -197,7 +197,8 @@ public class AuthController : NetworkBehaviour
             //create new SQL server login for the new user
             registeredUsername = name;
             registeredPassword = password;
-            CreateNewUserAccount(registeredUsername, registeredUsername);
+           
+            CreateNewUserAccount(registeredUsername, registeredPassword);
 
             // Load Scene for choosing host/client
 
@@ -222,10 +223,13 @@ public class AuthController : NetworkBehaviour
         errorWindow.SetActive(true);
     }
 
+    
+
     public void CreateNewUserAccount(string username, string password)
     {
+       
         string DBname = "AvatarProject";
-        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
+        string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
         try
         {
@@ -238,14 +242,14 @@ public class AuthController : NetworkBehaviour
                 using (var command = connection.CreateCommand())
                 {
                     /*
-                     * CREATE LOGIN user1234 WITH PASSWORD = 'password';
+                     * CREATE LOGIN user1234 WITH PASSWORD = 'password', CHECK_POLICY = OFF;
                         USE AvatarProject; CREATE USER user1234 FOR LOGIN user1234;
                         USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO user1234;
 
                      * 
                      */
 
-                    command.CommandText = "CREATE LOGIN " + username + " WITH PASSWORD = '" + password + "'; " +
+                    command.CommandText = "CREATE LOGIN " + username + " WITH PASSWORD = '" + password + "', CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF; " +
                         "USE " + DBname + "; CREATE USER " + username + " FOR LOGIN " + username + "; " +
                         "USE " + DBname + "; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "; ";
 
