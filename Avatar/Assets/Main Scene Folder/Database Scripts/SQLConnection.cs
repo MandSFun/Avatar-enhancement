@@ -8,6 +8,8 @@ using UnityEngine;
 using System.Net;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
+using UnityEngine.Rendering.PostProcessing;
 
 
 public class SQLConnection : MonoBehaviour
@@ -25,6 +27,7 @@ public class SQLConnection : MonoBehaviour
     [SerializeField] private Item grenadeItem;
     [SerializeField] private Item backpackItem;
     [SerializeField] Sprite NewtorkStatusIcon;
+    bool initialConfigSuccess = false;
     public string adminConString;
     public string userConString;
     public string IPAddress;
@@ -45,33 +48,100 @@ public class SQLConnection : MonoBehaviour
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
         //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
-        SqlConnection con = new SqlConnection(adminConString);
-        try {
-            CreateNewDB();
-            con.Open();
-            Debug.Log("SQL server connection successful!");
-            SQLServerConnected = true;
-            CreateDB(adminConString);
-            ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
-            //DisplayWeapons();
+        
 
-            con.Close();
+    }
+
+    private void Update()
+    {
+        if (!initialConfigSuccess)
+        {
+            adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+            SqlConnection con = new SqlConnection(adminConString);
+            try
+            {
+                CreateNewDB();
+                con.Open();
+                Debug.Log("SQL server connection successful!");
+                SQLServerConnected = true;
+                CreateDB(adminConString);
+
+                if (AuthController.instance!= null && AuthController.instance.isNewUser)
+                {
+                    CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
+                }
+                else
+                {
+                    // create new user if already registered
+                    CreateNewUserAccount(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
+                }
+                ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
+                //DisplayWeapons();
+
+                con.Close();
+
+            }
+            catch (Exception e)
+            {
+                Debug.Log("ERROR SQL server connection unsuccessful!");
+                SQLServerConnected = false;
+            }
+
+            initialConfigSuccess = true;
 
         }
-        catch(Exception e) {
-            Debug.Log("ERROR SQL server connection unsuccessful!");
-            SQLServerConnected = false;
-        }
-
-       
-
-
     }
 
     public void ConfigureUserConnectionString(string username, string password)
     {
         userConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=" + username + ";Password=" + password +";";
+    }
+
+
+    public void CreateNewUserAccount(string username, string password)
+    {
+
+        string DBname = "AvatarProject";
+        string connstring = "Data Source=" + IPAddress + " ;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
+
+                connection.Open();
+
+
+                using (var command = connection.CreateCommand())
+                {
+                    /*
+                     * IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' username ' AND type = 'S') BEGIN
+                         CREATE LOGIN   username  WITH PASSWORD ='password' , CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF; 
+                        USE  AvatarProject; CREATE USER  username  FOR LOGIN  username ; 
+                        USE  AvatarProject ; GRANT SELECT, INSERT, UPDATE, DELETE TO  username  END;
+
+                     * 
+                     */
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' " + username + " ' AND type = 'S') " +
+                        "BEGIN CREATE LOGIN   "+ username + " WITH PASSWORD = '" + password + "' ," +
+                        " CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF   USE AvatarProject; CREATE USER " + username + " FOR LOGIN " + username + " ;" +
+                        " USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "  END; ";
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL server) Error creating new account");
+
+        }
+
     }
 
     public void TestConnection()

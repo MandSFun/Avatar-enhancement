@@ -101,13 +101,13 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             nameInputField.Select();
             nameInputField.ActivateInputField();
-            localPlayerID = nameInputField.text.GetHashCode();
+            //
 
 
         }
         else
         {
-            
+            localPlayerID = nameInputField.text.GetHashCode();
             NetworkManager.Singleton.StartHost();
             GetlocalIP();
         }
