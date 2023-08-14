@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Text;
 using TMPro;
+using System.Net;
+using Unity.Netcode.Transports.UTP;
+using System.Net.Sockets;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
@@ -28,6 +31,8 @@ public class NetworkManagerUI : NetworkBehaviour
     public NetworkManager network;
     public int localPlayerID;
     public ulong LocalId => network.LocalClient.ClientId;
+    string IPAddress;
+    [SerializeField] UnityTransport transport;
     // Start is called before the first frame update
 
     private void Awake()
@@ -104,11 +109,21 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             
             NetworkManager.Singleton.StartHost();
+            GetlocalIP();
         }
         //setPassword(passwordInputField.text);
 
     }
+     private void GetlocalIP(){
+          string hostName = Dns.GetHostName();
+    IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+    Debug.Log(IPAddress +" "+ hostName);
 
+     }
+     public void SetIpAddress() {
+		transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+		transport.ConnectionData.Address = IPAddress;
+	}
     private void HandleClientDisconnect(ulong clientId)
     {
         // if (NetworkManager.Singleton.IsServer)
