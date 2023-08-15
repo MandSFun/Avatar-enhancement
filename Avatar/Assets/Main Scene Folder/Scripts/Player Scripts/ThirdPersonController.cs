@@ -34,7 +34,7 @@ namespace StarterAssets
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
-
+        
         [Space(10)]
 
         public float JumpHeight = 1.2f;
@@ -69,7 +69,8 @@ namespace StarterAssets
         [SerializeField] private GameObject bloodGush;
 
         [SerializeField] private Transform bloodGushOrigin;
-
+ [Header("Chat")]
+ public GameObject chatholder;
         [Header("Cinemachine")]
 
         CinemachineComponentBase componentBase;
@@ -122,6 +123,7 @@ namespace StarterAssets
         public CinemachineVirtualCamera ThirdPersonCam;
         public CinemachineVirtualCamera FirstPersonCam;
         public GameObject carCamera;
+        public static ThirdPersonController  instance; 
 
         private const float thresehold = 0.01f;
         private const float speedOffset = 0.1f;
@@ -145,6 +147,7 @@ namespace StarterAssets
         {
             //Reference main cam;
             mainCamera = Camera.main.transform;
+            
         }
 
         private void Start()
@@ -157,7 +160,7 @@ namespace StarterAssets
             input = GetComponent<StarterAssetsInputs>();
             //playerNameText = GameObject.FindGameObjectWithTag("nop").GetComponentInChildren<TMP_Text>();
 
-
+            
             AssignAnimationIDs();
 
             // reset our timeouts on start
@@ -195,7 +198,7 @@ namespace StarterAssets
         private void Update()
         {
             if (IsOwner)
-            {
+            { 
                 //hasAnim = TryGetComponent(out anim);
                 if (!isDead)
                 {
@@ -261,7 +264,7 @@ namespace StarterAssets
             if (IsOwner)
             {
 
-
+          
                 playerInput = GetComponent<PlayerInput>();
                 playerInput.enabled = true;
                 //FirstPersonCam.gameObject.SetActive(false);

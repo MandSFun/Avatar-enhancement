@@ -950,6 +950,7 @@ MonoBehaviour:
     m_Bits: 513
   bloodGush: {fileID: 4900686166078442631}
   bloodGushOrigin: {fileID: 4900686166078443334}
+  chatholder: {fileID: 0}
   maxCameraDistance: 4
   CinemachineCameraTarget: {fileID: 4900686166078442720}
   TopClamp: 70
@@ -992,8 +993,6 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
-  aim: 0
-  fps: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1

@@ -13,10 +13,10 @@ using System.Net.Sockets;
 public class NetworkManagerUI : NetworkBehaviour
 {
 
-    
+
     public static NetworkManagerUI instance;
 
-    [SerializeField] private TMP_InputField passwordInputField;
+    [SerializeField] private TMP_InputField IPinputField;
     [SerializeField] private TMP_InputField nameInputField;
 
 
@@ -84,9 +84,19 @@ public class NetworkManagerUI : NetworkBehaviour
         }
         else
         {
-            
-            NetworkManager.Singleton.StartClient();
-            
+            if (IPinputField.text == "")
+            {
+                IPinputField.ActivateInputField();
+            }
+            else
+            {
+                string ip = IPinputField.text;
+
+                SetIpAddress(ip);
+
+                NetworkManager.Singleton.StartClient();
+            }
+
         }
 
     }
@@ -114,16 +124,18 @@ public class NetworkManagerUI : NetworkBehaviour
         //setPassword(passwordInputField.text);
 
     }
-     private void GetlocalIP(){
-          string hostName = Dns.GetHostName();
-    IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
-    Debug.Log(IPAddress +" "+ hostName);
+    private void GetlocalIP()
+    {
+        string hostName = Dns.GetHostName();
+        IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+        Debug.Log(IPAddress + " " + hostName);
 
-     }
-     public void SetIpAddress() {
-		transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-		transport.ConnectionData.Address = IPAddress;
-	}
+    }
+    public void SetIpAddress(string ip)
+    {
+        transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        transport.ConnectionData.Address = ip;
+    }
     private void HandleClientDisconnect(ulong clientId)
     {
         // if (NetworkManager.Singleton.IsServer)
