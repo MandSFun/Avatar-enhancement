@@ -5,6 +5,7 @@ using Unity.Netcode;
 using TMPro;
 using StarterAssets;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class ChatManager : NetworkBehaviour
 {
@@ -16,6 +17,8 @@ public class ChatManager : NetworkBehaviour
     [SerializeField]GameObject holder;
 
     public ThirdPersonController interactingPlayerController;
+    public Button chatButton;
+    public GameObject player;
 
 
 
@@ -26,7 +29,8 @@ public class ChatManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-
+      player = GameObject.FindGameObjectWithTag("Player");
+      interactingPlayerController = player.GetComponent<ThirdPersonController>();
         string message ="Player "+NetworkManager.Singleton.LocalClientId+" has joined.";
         SendChatMessageServerRpc(message,NetworkManager.Singleton.LocalClientId);
         
@@ -57,12 +61,13 @@ public class ChatManager : NetworkBehaviour
    public void Chatpop(){
     if(holder.activeSelf){
         holder.SetActive(false);
-     //  interactingPlayerController.enabled = true;
+    //     interactingPlayerController = player.GetComponent<ThirdPersonController>();
+    //    interactingPlayerController.enabled = true;
         
     }
     else
     holder.SetActive(true);
-    // interactingPlayerController.enabled=false;
+     //interactingPlayerController.enabled=false;
     
    }
     void AddMessage(string msg,ulong senderID)
