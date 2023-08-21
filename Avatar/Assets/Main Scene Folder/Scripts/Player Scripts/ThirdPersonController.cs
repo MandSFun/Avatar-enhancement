@@ -208,6 +208,7 @@ namespace StarterAssets
                         JumpAndGravity();
                         Move();
                     }
+                  
 
                     if (firstpersonstatus == false)
                     {

@@ -222,7 +222,7 @@ public class NetworkManagerUI : NetworkBehaviour
         {
             // If the client is not approved, reject the connection and provide a reason
             response.Approved = false;
-            response.Reason = "Incorrect password.";
+           // response.Reason = "Incorrect password.";
         }
         response.PlayerPrefabHash = null;
     }
