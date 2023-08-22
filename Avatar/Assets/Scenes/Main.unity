@@ -2450,26 +2450,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4900686166078442603, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
   m_PrefabInstance: {fileID: 830827338}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &460855839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460855829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64ebc0bc5caf7e547ad040f96b628387, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  layer:
-    serializedVersion: 2
-    m_Bits: 512
-  aimingRig: {fileID: 1028894171}
-  aimDuration: 0.3
-  sceneviewCamera: {fileID: 963883142}
-  weaponOnHand: {fileID: 1635226904}
-  gun: {fileID: 1635226905}
 --- !u!114 &460855848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3845,6 +3825,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5560393014106094142, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
+      propertyPath: layer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 5560393014106094142, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
+      propertyPath: weaponOnHand
+      value: 
+      objectReference: {fileID: 1635226904}
+    - target: {fileID: 5560393014106094142, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
+      propertyPath: sceneviewCamera
+      value: 
+      objectReference: {fileID: 963883142}
     - target: {fileID: 6229783591433730551, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 188151378
@@ -3865,8 +3857,7 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 4112480730
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5560393014106094142, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
+    m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
 --- !u!1 &836980042
@@ -6176,6 +6167,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Chatpop
       objectReference: {fileID: 0}
+    - target: {fileID: 8066545845721900814, guid: c75cf5669dd2ddc4f88c6dbeb55495ef, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: c75cf5669dd2ddc4f88c6dbeb55495ef, type: 3}
@@ -6825,17 +6820,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3022001155716913170, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
   m_PrefabInstance: {fileID: 830827338}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1635226905 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6425596000219393437, guid: bb9929c9c28ee4f43be0e9d84208489b, type: 3}
-  m_PrefabInstance: {fileID: 830827338}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1635226904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81d5f63a56b636d4fbfe43dc681a4136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1650512580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12166,6 +12150,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4900686166078442603, guid: cc0322140365f0145b215540af11abda, type: 3}
     - target: {fileID: 5967090718270109270, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
+      propertyPath: NetworkConfig.OldPrefabList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5967090718270109270, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
       propertyPath: NetworkConfig.NetworkPrefabs.Array.size
       value: 8
       objectReference: {fileID: 0}
@@ -12201,6 +12189,14 @@ PrefabInstance:
       propertyPath: NetworkConfig.NetworkPrefabs.Array.data[7].Prefab
       value: 
       objectReference: {fileID: 893837851}
+    - target: {fileID: 5967090718270109270, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
+      propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5967090718270109270, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
+      propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 0e86f02bc9ab5e04bbd186ae40efab26, type: 2}
     - target: {fileID: 5967090718270109271, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
       propertyPath: ConnectionData.ServerListenAddress
       value: 127.0.0.1

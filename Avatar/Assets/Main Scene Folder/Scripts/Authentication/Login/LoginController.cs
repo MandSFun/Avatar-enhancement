@@ -498,8 +498,8 @@ public class LoginController : MonoBehaviour
     /// <returns></returns>
     public async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
     {
-        string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
-        //string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
+        //string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
+        string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
         arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
         arguments.Add("ACAPY_ADMIN_PORT", "11001");
         arguments.Add("CONTROLLER_PORT", "3001");

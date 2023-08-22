@@ -32,8 +32,9 @@ public class ChatManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        player = GameObject.FindGameObjectWithTag("Player");
-        interactingPlayerController = player.GetComponent<PlayerInput>();
+        chatButton.gameObject.SetActive(true);
+       // player = GameObject.FindGameObjectWithTag("Player");
+       // interactingPlayerController = player.GetComponent<PlayerInput>();
         string message = "Player " + NetworkManager.Singleton.LocalClientId + " has joined.";
         SendChatMessageServerRpc(message, NetworkManager.Singleton.LocalClientId);
         playerspawned = true;
@@ -52,19 +53,19 @@ public class ChatManager : NetworkBehaviour
             SendChatMessage(chatInput.text);
             chatInput.text = "";
         }
-        if (playerspawned)
-        {
-            if (chatStatus)
-            {
-                interactingPlayerController.enabled = false;
-                Debug.Log("Set false");
-            }
-            else
-            {
-                interactingPlayerController.enabled = true;
-                Debug.Log("set true");
-            }
-        }
+        // if (playerspawned)
+        // {
+        //     if (chatStatus)
+        //     {
+        //         interactingPlayerController.enabled = false;
+        //         Debug.Log("Set false");
+        //     }
+        //     else
+        //     {
+        //         interactingPlayerController.enabled = true;
+        //         Debug.Log("set true");
+        //     }
+        // }
 
     }
 

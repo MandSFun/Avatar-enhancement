@@ -42,6 +42,7 @@ public class NetworkManagerUI : NetworkBehaviour
 
     private void Start()
     { //network = NetworkManager.Singleton;
+   
         NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
         NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
     }
@@ -83,7 +84,8 @@ public class NetworkManagerUI : NetworkBehaviour
             nameInputField.ActivateInputField();
         }
         else
-        {
+        {IPAddress = passwordInputField.text;
+            SetIpAddress(IPAddress); 
             
             NetworkManager.Singleton.StartClient();
             
@@ -120,10 +122,12 @@ public class NetworkManagerUI : NetworkBehaviour
     Debug.Log(IPAddress +" "+ hostName);
 
      }
-     public void SetIpAddress() {
-		transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-		transport.ConnectionData.Address = IPAddress;
-	}
+    public void SetIpAddress(string ipad)
+    {
+        transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+
+        transport.ConnectionData.Address = ipad;
+    }
     private void HandleClientDisconnect(ulong clientId)
     {
         // if (NetworkManager.Singleton.IsServer)
