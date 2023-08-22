@@ -27,7 +27,7 @@ public class loadOnClick : MonoBehaviour
                 blackOutSquare.GetComponent<Image>().color = objectColor;
                 yield return null;
             }
-            Loader.Load(Loader.Scene.Registration);
+            Loader.Load(Loader.Scene.Login);
         }
 
     }

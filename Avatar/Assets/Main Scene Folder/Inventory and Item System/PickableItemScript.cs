@@ -74,7 +74,7 @@ public class PickableItemScript : MonoBehaviour
         UpdatePlayerHeldItem();
         if (collidedObject != null && collidedObject.tag == "MiniGameTrigger" && Input.GetKeyDown(KeyCode.Return))
         {
-            SceneManager.LoadScene("Shooting Game");
+            SceneManager.LoadSceneAsync("Shooting Game");
         }
         //Debug.Log(collidedObject.tag);
 

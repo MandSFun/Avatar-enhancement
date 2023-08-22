@@ -1281,7 +1281,7 @@ MonoBehaviour:
   aimCam: {fileID: 0}
   newDynamiteObj: {fileID: 7110251769517384457, guid: 334769f5344d9a546bb3e4e05a498e1d, type: 3}
   newSmokeGrenadeObj: {fileID: 113076777504956686, guid: 63f22b57e3d9138478f409ca5e8fa6f7, type: 3}
-  newAk47Obj: {fileID: 6918189679785278061, guid: 1c0ed14826a95d4428c81879a1a3f35c, type: 3}
+  newAk47Obj: {fileID: 8533659323394300343, guid: ecb35b5db372f864fa34b8780e260cce, type: 3}
   newGrenadeObj: {fileID: 5349320068034011564, guid: 862c2899134a4d349938e7d4b8091e42, type: 3}
   playerID: 0
   currItem: {fileID: 0}

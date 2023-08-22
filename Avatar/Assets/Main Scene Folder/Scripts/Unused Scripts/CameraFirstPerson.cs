@@ -20,6 +20,7 @@ public class CameraFirstPerson : MonoBehaviour
     [SerializeField] float movementSpeed = 2f;
     void Start()
     {
+        
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -33,6 +34,12 @@ public class CameraFirstPerson : MonoBehaviour
         else if (Input.GetKey(KeyCode.S)) 
         {
             transform.position = transform.position - transform.forward * Time.deltaTime * movementSpeed;
+        }else if (Input.GetKey(KeyCode.D))
+        {
+            transform.position = transform.position + transform.right * Time.deltaTime * movementSpeed;
+        }else if (Input.GetKey(KeyCode.A))
+        {
+            transform.position = transform.position - transform.right * Time.deltaTime * movementSpeed;
         }
 
 

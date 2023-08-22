@@ -56,24 +56,24 @@ public class SQLConnection : MonoBehaviour
     {
         if (!initialConfigSuccess)
         {
-            adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+            adminConString = "Data Source=" + IPAddress + ";Initial Catalog=master;User ID=sa;Password=D5taCard;";
             SqlConnection con = new SqlConnection(adminConString);
             try
             {
-                CreateNewDB();
+                LoginController.Instance.CreateNewDB();
                 con.Open();
                 Debug.Log("SQL server connection successful!");
                 SQLServerConnected = true;
-                CreateDB(adminConString);
+                LoginController.Instance.CreateTables();
 
                 if (AuthController.instance!= null && AuthController.instance.isNewUser)
                 {
-                    CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
+                    AuthController.instance.CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
                 }
                 else
                 {
                     // create new user if already registered
-                    CreateNewUserAccount(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
+                    AuthController.instance.CreateNewUserAccount(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
                 }
                 ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
                 //DisplayWeapons();
@@ -98,51 +98,7 @@ public class SQLConnection : MonoBehaviour
     }
 
 
-    public void CreateNewUserAccount(string username, string password)
-    {
-
-        string DBname = "AvatarProject";
-        string connstring = "Data Source=" + IPAddress + " ;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        try
-        {
-            using (SqlConnection connection = new SqlConnection(connstring))
-            {
-
-                connection.Open();
-
-
-                using (var command = connection.CreateCommand())
-                {
-                    /*
-                     * IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' username ' AND type = 'S') BEGIN
-                         CREATE LOGIN   username  WITH PASSWORD ='password' , CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF; 
-                        USE  AvatarProject; CREATE USER  username  FOR LOGIN  username ; 
-                        USE  AvatarProject ; GRANT SELECT, INSERT, UPDATE, DELETE TO  username  END;
-
-                     * 
-                     */
-
-                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' " + username + " ' AND type = 'S') " +
-                        "BEGIN CREATE LOGIN   "+ username + " WITH PASSWORD = '" + password + "' ," +
-                        " CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF   USE AvatarProject; CREATE USER " + username + " FOR LOGIN " + username + " ;" +
-                        " USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "  END; ";
-
-                    command.ExecuteNonQuery();
-                }
-
-                connection.Close();
-
-
-            }
-        }
-        catch (Exception e)
-        {
-            UnityEngine.Debug.Log("(SQL server) Error creating new account");
-
-        }
-
-    }
+  
 
     public void TestConnection()
     {
@@ -217,79 +173,8 @@ public class SQLConnection : MonoBehaviour
    
    
 
-    public void CreateDB(string connstring)
-    {
-        try
-        {
-            //create the db connection
-            using (SqlConnection connection = new SqlConnection(connstring))
-            {
-
-                connection.Open();
-                SQLServerConnected = true;
-                //set up objeect called command to allow db control
-                using (var command = connection.CreateCommand())
-                {
-
-                    //sql statements to execute
-                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'userdata')BEGIN  CREATE TABLE userdata ( playerid INT, name VARCHAR(20))END;";
-                    command.ExecuteNonQuery();
-                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'weapons')BEGIN  CREATE TABLE weapons ( playerid INT, weaponid INT, quantity INT) END;";
-                    command.ExecuteNonQuery();
-                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'playerlocation')BEGIN  CREATE TABLE playerlocation ( playerid INT, x INT, y INT, z INT) END;";
-                    command.ExecuteNonQuery();
-                }
-
-                connection.Close();
-            }
-        }catch (Exception e)
-        {
-            Debug.Log("(SQL Server) Error creating new database. Get admin to create database!");
-            SQLServerConnected = false;
-        }
-        
-    }
-    public void CreateNewDB()
-    {
-        string connstring = "Data Source="+ IPAddress +";Initial Catalog=master;User ID=sa;Password=D5taCard;";
-        try
-        {
-            using (SqlConnection connection = new SqlConnection(connstring))
-            {
-
-                connection.Open();
-
-
-                using (var command = connection.CreateCommand())
-                {
-                    /*
-                     *  IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'DataBase')
-                        BEGIN
-                             CREATE DATABASE [DataBase]
-
-
-                            END
-
-                     * 
-                     */
-
-                    command.CommandText = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'AvatarProject')     " +
-                        "BEGIN  CREATE DATABASE AvatarProject  END";
-
-                    command.ExecuteNonQuery();
-                }
-
-                connection.Close();
-
-
-            }
-        }
-        catch (Exception e)
-        {
-            UnityEngine.Debug.Log("(SQL server) Error creating AvatarProject DB");
-
-        }
-    }
+    
+    
 
     public void AddWeapon(int playerID, int weaponid, int quantity)
     {

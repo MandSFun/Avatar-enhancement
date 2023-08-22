@@ -1,6 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Avatar/Assets/Main Scene Folder/Scripts/Authentication/Credentials.meta
+guid: c75cf5669dd2ddc4f88c6dbeb55495ef
+folderAsset: yes
+DefaultImporter:
+========
 guid: 0cbb8b2fe1e237d47a8840458b4712e3
 PrefabImporter:
+>>>>>>>> ebb66644e61d32bbd23437193efc8af67cfd0df2:Avatar/Assets/Main Scene Folder/Chat system/Prefabs/Chatbox ver2.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

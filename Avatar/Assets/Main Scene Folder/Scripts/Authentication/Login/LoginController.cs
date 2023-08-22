@@ -18,6 +18,7 @@ using TMPro;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using System.Data.SqlClient;
 
 public class LoginController : MonoBehaviour
 {
@@ -73,7 +74,86 @@ public class LoginController : MonoBehaviour
         IPAddress = IPAddressInputField.text;
 
         //Add check that name is not already on the blockchain
-        StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl)); 
+        StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl, true)); 
+    }
+
+    public async void AccessAdminPanel()
+    {
+
+        //Get name and password from input fields
+        string name = nameInputField.text;
+        string password = passwordInputField.text;
+        IPAddress = IPAddressInputField.text;
+
+        //Add check that name is not already on the blockchain
+        StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl, false));
+    }
+
+    public void CreateNewDB()
+    {
+        string connstring = "Data Source=" + IPAddress + ";Initial Catalog=master;User ID=sa;Password=D5taCard;";
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
+
+                connection.Open();
+
+
+                using (var command = connection.CreateCommand())
+                {
+
+                    command.CommandText = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'AvatarProject')     " +
+                        "BEGIN  CREATE DATABASE AvatarProject  END";
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL server) Error creating AvatarProject DB");
+
+        }
+    }
+
+    public void CreateTables()
+    {
+        string connstring = "Data Source=" + IPAddress + ";Initial Catalog= AvatarProject;User ID=sa;Password=D5taCard;";
+        try
+        {
+            //create the db connection
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
+
+                connection.Open();
+                //set up objeect called command to allow db control
+                using (var command = connection.CreateCommand())
+                {
+
+                    //sql statements to execute
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'userdata')BEGIN  CREATE TABLE userdata ( username_hash INT, password_hash INT )END;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'weapons')BEGIN  CREATE TABLE weapons ( playerid INT, weaponid INT, quantity INT) END;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'playerlocation')BEGIN  CREATE TABLE playerlocation ( playerid INT, x INT, y INT, z INT) END;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'IssuedCredentials')BEGIN  CREATE TABLE IssuedCredentials ( CredentialID INT, Issuer varchar(20), UserID varchar(20), Expiry INT) END;";
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL Server) Error creating new database. Get admin to create database!");
+        }
+
     }
 
     /// <summary>
@@ -83,7 +163,7 @@ public class LoginController : MonoBehaviour
     /// <param name="password"></param>
     /// <param name="ledgerUrl"></param>
     /// <returns>Redirects user to main game page</returns>
-    private IEnumerator HandleLoginQueryResult(string username, string password, string ledgerUrl)
+    private IEnumerator HandleLoginQueryResult(string username, string password, string ledgerUrl, bool loadMainScene)
     {
         yield return StartCoroutine(CheckIfUserExists(username, ledgerUrl, (userExists) =>
         {
@@ -117,7 +197,7 @@ public class LoginController : MonoBehaviour
 
                 // Debug.Log(url);
                 // Send the registration data to ACA-Py agent via HTTP request
-                StartCoroutine(SendLoginRequest(url, jsonData, password, username));
+                StartCoroutine(SendLoginRequest(url, jsonData, password, username, loadMainScene));
             }
             else
             {  
@@ -180,7 +260,7 @@ public class LoginController : MonoBehaviour
     /// <param name="password"></param>
     /// <param name="name"></param>
     /// <returns>Redirects players to main game page</returns>
-    IEnumerator SendLoginRequest(string url, string jsonData, string password, string name)
+    IEnumerator SendLoginRequest(string url, string jsonData, string password, string name, bool loadMainScene)
     {
         var request = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonData);
@@ -218,10 +298,28 @@ public class LoginController : MonoBehaviour
             verifiedUsername = name;
             verifiedPassword = password;
 
+            bool isAuthenticated = AuthenticateWithSQLServer(verifiedUsername,verifiedPassword);
+
             // Load Scene for choosing host/client
-            Loader.Load(Loader.Scene.Main);
-            StartAcaPyInstanceAsync(arguments);
-            request.Dispose();
+            if (isAuthenticated)
+            {
+                if (loadMainScene)
+                {
+                    Loader.Load(Loader.Scene.Main);
+                }
+                else
+                {
+                    SceneManager.LoadSceneAsync("Admin Panel");
+                }
+                
+                StartAcaPyInstanceAsync(arguments);
+                request.Dispose();
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Error logging in!");
+            }
+            
 
         }
         else
@@ -230,12 +328,74 @@ public class LoginController : MonoBehaviour
         }
     }
 
+
+
+
+    public bool AuthenticateWithSQLServer( string username, string password)
+    {
+        string adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+        SqlConnection con = new SqlConnection(adminConString);
+        bool dataFound = false;
+
+        try
+        {
+             using (SqlConnection connection = new SqlConnection(adminConString))
+            {
+
+                connection.Open();
+             
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM userdata WHERE username_hash = " + username.GetHashCode() + ";";
+
+                    using (System.Data.IDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader["username_hash"] == null)
+                            {
+                                UnityEngine.Debug.Log("(SQL server) no such user exists, no data found");
+                                dataFound = false;
+                                UnityEngine.Debug.Log("User does not exist!");
+                            }
+                            else if (reader["password_hash"].ToString() == password.GetHashCode().ToString())
+                            {
+                               return true;
+                            }
+                            else
+                            {
+                                dataFound = false;
+                                UnityEngine.Debug.Log("Wrong password");
+                            }
+                        }
+                        reader.Close();
+                    }
+
+                    
+                    
+                }
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL Server) Error validating password!");
+            
+        }
+        return false;
+    }
+
     /// <summary>
     /// Start Docker-Compose file and create a seperate terminal to log output from the containers
     /// </summary>
     /// <param name="composeFilePath"></param>
     /// <param name="arguments"></param>
     /// <returns></returns>
+    /// 
+
+
     public async Task RunDockerComposeAsync(string composeFilePath, Dictionary<string, string> arguments)
     {
         Process process = new Process();
@@ -336,9 +496,10 @@ public class LoginController : MonoBehaviour
     /// </summary>
     /// <param name="arguments"></param>
     /// <returns></returns>
-    private async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
+    public async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
     {
         string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
+        //string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
         arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
         arguments.Add("ACAPY_ADMIN_PORT", "11001");
         arguments.Add("CONTROLLER_PORT", "3001");

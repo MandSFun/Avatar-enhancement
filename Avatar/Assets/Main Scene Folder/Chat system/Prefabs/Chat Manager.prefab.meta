@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Avatar/Assets/Scenes/Admin Panel.unity.meta
+guid: 19d25ff69992b4e4bbe65af72fe89a0b
+DefaultImporter:
+========
 guid: b7fd4c5ac121cfa49a414440ee6d60ec
 PrefabImporter:
+>>>>>>>> ebb66644e61d32bbd23437193efc8af67cfd0df2:Avatar/Assets/Main Scene Folder/Chat system/Prefabs/Chat Manager.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

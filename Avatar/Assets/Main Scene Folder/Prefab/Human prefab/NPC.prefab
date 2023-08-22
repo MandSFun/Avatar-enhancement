@@ -1936,7 +1936,7 @@ MonoBehaviour:
   aimingRig: {fileID: 6064604475768480403}
   aimDuration: 0.3
   sceneviewCamera: {fileID: 0}
-  weaponOnHand: {fileID: 1930238582737827284}
+  weaponOnHand: {fileID: 5082648477674571087, guid: 5094a7bf081b33e45a1a9a3e7adf325e, type: 3}
 --- !u!1 &4900686166078442720
 GameObject:
   m_ObjectHideFlags: 0
@@ -3531,11 +3531,6 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 43771f61db870f14d8f031c6e2fb0395, type: 3}
---- !u!1 &1930238582737827284 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5082648477674571087, guid: 43771f61db870f14d8f031c6e2fb0395, type: 3}
-  m_PrefabInstance: {fileID: 6647493503489044635}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3435237394099712428 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8353278090937221431, guid: 43771f61db870f14d8f031c6e2fb0395, type: 3}
