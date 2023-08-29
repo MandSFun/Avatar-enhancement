@@ -24,7 +24,9 @@ public class LoginController : MonoBehaviour
 {
     [SerializeField] private TMP_InputField IPAddressInputField;
     [SerializeField] private TMP_InputField passwordInputField;
-    [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private TMP_InputField nameInputField; 
+    [SerializeField] GameObject popupWindow;
+    [SerializeField] TMP_Text windowMessage;
 
     public GameObject parentPopupWindow;
     private GameObject errorWindow;
@@ -36,8 +38,7 @@ public class LoginController : MonoBehaviour
     public string verifiedUsername;
     public string verifiedPassword;
     public string IPAddress;
-    public string vu;
-    public string vp;
+    
   
 
 
@@ -72,14 +73,23 @@ public class LoginController : MonoBehaviour
     /// <returns></returns>
     public async void Login(){
 
-        //Get name and password from input fields
-        string nameInput = nameInputField.text;
-        string passwordInput = passwordInputField.text;
-        IPAddress = IPAddressInputField.text;
-        
+        if (DockerStatusIcon.instance.SQLServerConnection == false)
+        {
+            popupWindow.SetActive(true);
+            windowMessage.text = "Not connected to SQL Server!";
+        }
+        else
+        {
+            //Get name and password from input fields
+            string nameInput = nameInputField.text;
+            string passwordInput = passwordInputField.text;
+            IPAddress = IPAddressInputField.text;
 
-        //Add check that name is not already on the blockchain
-        StartCoroutine(HandleLoginQueryResult(nameInput, passwordInput, ledgerUrl, true)); 
+
+            //Add check that name is not already on the blockchain
+            StartCoroutine(HandleLoginQueryResult(nameInput, passwordInput, ledgerUrl, true));
+        }
+        
     }
 
     public void OnDestroy()
@@ -247,6 +257,7 @@ public class LoginController : MonoBehaviour
                     }
                     else {
                         UnityEngine.Debug.Log("Alias is null");
+                        
                     }
                 }
             }
@@ -319,7 +330,6 @@ public class LoginController : MonoBehaviour
                 userdatapersist.Instance.verifiedUser = verifiedUsername;
                 userdatapersist.Instance.IPAdd = IPAddress;
 
-                UnityEngine.Debug.Log("Verified values are " + verifiedUsername + " to " + verifiedPassword);
 
 
                 if (loadMainScene)
@@ -338,7 +348,8 @@ public class LoginController : MonoBehaviour
             }
             else
             {
-                UnityEngine.Debug.Log("Error logging in!");
+                popupWindow.SetActive(true);
+                windowMessage.text = "Error logging in!";
             }
             
 
@@ -386,7 +397,8 @@ public class LoginController : MonoBehaviour
                             else
                             {
                                 dataFound = false;
-                                UnityEngine.Debug.Log("Wrong password");
+                                popupWindow.SetActive(true);
+                                windowMessage.text = "Wrong Password!";
                             }
                         }
                         reader.Close();
@@ -403,7 +415,9 @@ public class LoginController : MonoBehaviour
         catch (Exception e)
         {
             UnityEngine.Debug.Log("(SQL Server) Error validating password!");
-            
+            popupWindow.SetActive(true);
+            windowMessage.text = "Error Validating password!";
+
         }
         return false;
     }
@@ -519,8 +533,8 @@ public class LoginController : MonoBehaviour
     /// <returns></returns>
     public async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
     {
-        //string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
-        string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
+        string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
+        //string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
         arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
         arguments.Add("ACAPY_ADMIN_PORT", "11001");
         arguments.Add("CONTROLLER_PORT", "3001");

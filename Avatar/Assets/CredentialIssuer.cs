@@ -15,6 +15,7 @@ using System.Data.SqlClient;
 using System.Net.Http;
 using System.Text;
 using I18N.Common;
+using System.Globalization;
 
 public class CredentialIssuer : MonoBehaviour
 {
@@ -23,9 +24,11 @@ public class CredentialIssuer : MonoBehaviour
     [SerializeField] private TMP_InputField userIDInputField;
     [SerializeField] private TMP_InputField expiryInputField;
     [SerializeField] private TMP_Text issuerName;
-    [SerializeField] GameObject successfulWindow;
+    [SerializeField] GameObject popupWindow;
+    [SerializeField] TMP_Text windowMessage;
     private string IPAddress;
     private string issuer;
+    bool validInput = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -51,15 +54,24 @@ public class CredentialIssuer : MonoBehaviour
         try
         {
             expiryDate = Int32.Parse(expiryInputField.text);
+            DateTime date = DateTime.ParseExact(expiryInputField.text, "ddmmyyyy", CultureInfo.InvariantCulture);
+            Debug.Log("Input date is " + date);
+            validInput = true;
         }
-        catch (FormatException)
+        catch (Exception)
         {
             Console.WriteLine($"Unable to parse '{expiryInputField.text}'");
+            popupWindow.SetActive(true);
+            windowMessage.text = "Expiry Date is in the wrong format!";
+        }
+
+        if (validInput)
+        {
+            int CredentialID = (userID + issuer + expiryInputField.text).GetHashCode();
+            sendReq(userID, CredentialID, userID, expiryDate);
         }
         
-        int CredentialID = (userID+issuer+expiryInputField.text).GetHashCode();
-       
-        sendReq(userID, CredentialID, userID, expiryDate);
+        
     }
 
 
@@ -75,7 +87,8 @@ public class CredentialIssuer : MonoBehaviour
             // Prepare the JSON payload
             string jsonPayload = $@"{{
                 ""attributes"": [
-                    ""{expiry.ToString()}""
+                    ""{expiry.ToString()}"",
+                    ""{userID.GetHashCode()}""                
                 ],
                 ""schema_name"": ""{credentialID.ToString()}"",
                 ""schema_version"": ""1.0""
@@ -95,7 +108,9 @@ public class CredentialIssuer : MonoBehaviour
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     Console.WriteLine(responseBody);
-                    successfulWindow.SetActive(true);
+                    popupWindow.SetActive(true);
+                    windowMessage.text = "Credential Generation Success! \n Credential ID = " + credentialID; 
+                    
                     AddCredentialToServer(issuer, credentialID, userID, expiry);
             }
                 else

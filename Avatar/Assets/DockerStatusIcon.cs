@@ -6,11 +6,17 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class DockerStatusIcon : MonoBehaviour
 {
-    bool SQLServerConnection = false;
-    
+    public bool SQLServerConnection = false;
+    public static DockerStatusIcon instance; 
 
+
+    private void Awake()
+    {
+        instance = this; 
+    }
     // Update is called once per frame
     void Update()
     {

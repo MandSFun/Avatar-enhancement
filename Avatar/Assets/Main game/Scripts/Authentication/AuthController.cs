@@ -21,6 +21,7 @@ using System.Data.SqlClient;
 using System.Net;
 using Debug = UnityEngine.Debug;
 using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
+using System.Globalization;
 
 [System.Serializable]
 public class JsonData
@@ -35,7 +36,11 @@ public class AuthController : NetworkBehaviour
     [SerializeField] private TMP_InputField IPAddressInputField;
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private TMP_InputField credentialInputField;
+    [SerializeField] private TMP_InputField IDInputField;
     [SerializeField] private TMP_Dropdown dropDown;
+    [SerializeField] GameObject popupWindow;
+    [SerializeField] TMP_Text windowMessage;
     public GameObject parentPopupWindow;
     private GameObject errorWindow;
     private GameObject successfulRegistrationWindow;
@@ -68,13 +73,90 @@ public class AuthController : NetworkBehaviour
         string name = nameInputField.text;
         string password = passwordInputField.text;
         string role = dropDown.captionText.text;
+        string ID = IDInputField.text;
+        string credential = credentialInputField.text;
         IPAddress = IPAddressInputField.text;
-
-        //Check that name is not already on the blockchain
-        StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
+        if (VerifyCredentialwithID(credential, ID, name,ledgerUrl))
+        {
+            Debug.Log("credential is valid!");
+            StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
+        }
+        else
+        {
+            popupWindow.SetActive(true);
+            windowMessage.text = "Failed to Verify Credential!";
+        }
+        
+        
     }
 
+    public bool VerifyCredentialwithID(string credential, string userID, string username, string ledgerUrl)
+    {
+        try
+        {
+            string transactionsUrl = $"{ledgerUrl}/ledger/domain?query=&type=101"; // Specify the transaction type as "101" for schemas
+            HttpResponseMessage response = client.GetAsync(transactionsUrl).Result;
 
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+                var transactions = JToken.Parse(responseBody)["results"];
+
+                foreach (var transaction in transactions)
+                {
+                    
+                    var responseData = transaction["txn"]["data"]["data"];
+                    var credName = responseData["name"];
+                    JArray items = (JArray)responseData["attr_names"];
+                    int length = items.Count;
+                    string expirydate ;
+                    string hashID;
+                    
+                    string hashedInputID = userID.GetHashCode().ToString();
+                    if (length == 2)
+                    {
+                         expirydate = Convert.ToString(responseData["attr_names"][0]);
+                         hashID = Convert.ToString(responseData["attr_names"][1]);
+                        
+                        Debug.Log("credential name is " + credName + " expiry date of " + expirydate + " with hashed userid of " + hashID);
+
+                        // check if credential ID is valid and user ID matches
+                            if (credName != null && string.Compare(credName.ToString(), credential) == 0 )
+                            {
+                            Debug.Log("credential names match");
+                                if (string.Compare(hashID, hashedInputID) == 0)
+                                {
+                                Debug.Log("userID hashes match");
+                                    DateTime expiryDate = DateTime.ParseExact(expirydate, "ddmmyyyy", CultureInfo.InvariantCulture);
+                                    DateTime dateNow = DateTime.Now;
+
+                                    if (expiryDate >= dateNow) //has not expired
+                                    {
+                                    Debug.Log("Credential has not expired");
+                                    return true;
+                                    }
+                                }
+                                
+                            
+                            }
+
+                    }     
+                }
+            }
+            else
+            {
+                displayErrorText("Error retrieving transactions!");
+            }
+        }
+        catch (Exception ex)
+        {
+            displayErrorText(ex.Message);
+        }
+
+        popupWindow.SetActive(true);
+        windowMessage.text = "Credential is not valid!";
+        return false;
+    }
 
     /// <summary>
     /// Coroutine to check if player is registered on the blockchain

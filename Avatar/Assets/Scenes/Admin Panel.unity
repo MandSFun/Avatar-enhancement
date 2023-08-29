@@ -374,7 +374,8 @@ MonoBehaviour:
   userIDInputField: {fileID: 350976852}
   expiryInputField: {fileID: 1176689171}
   issuerName: {fileID: 732981025}
-  successfulWindow: {fileID: 1710346676}
+  popupWindow: {fileID: 1710346676}
+  windowMessage: {fileID: 395323388}
 --- !u!1 &350976848
 GameObject:
   m_ObjectHideFlags: 0
