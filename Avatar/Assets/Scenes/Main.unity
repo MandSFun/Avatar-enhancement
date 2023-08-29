@@ -11369,7 +11369,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 0e86f02bc9ab5e04bbd186ae40efab26, type: 2}
     - target: {fileID: 5967090718270109271, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
       propertyPath: ConnectionData.ServerListenAddress
-      value: 127.0.0.1
+      value: 0.0.0.0
       objectReference: {fileID: 0}
     - target: {fileID: 5967090718270109272, guid: 1876629bf0a780947a28a0335ecf3706, type: 3}
       propertyPath: m_Name

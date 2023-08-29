@@ -34,7 +34,8 @@ public class SQLConnection : MonoBehaviour
     void Start()
     {
         //get IP address of computer
-        if (LoginController.instance.IPAddress != null)
+        try{
+            if (LoginController.instance.IPAddress != null)
         {
             IPAddress = userdatapersist.Instance.IPAdd;
         }
@@ -43,6 +44,10 @@ public class SQLConnection : MonoBehaviour
             string hostName = Dns.GetHostName();
             IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
         }
+        }catch (Exception e ){
+            Debug.Log(e.ToString());
+        }
+        
         
 
         //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
