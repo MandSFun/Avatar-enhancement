@@ -3791,7 +3791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &672212043
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8583,6 +8583,7 @@ GameObject:
   - component: {fileID: 1839324430}
   - component: {fileID: 1839324429}
   - component: {fileID: 1839324428}
+  - component: {fileID: 1839324431}
   m_Layer: 5
   m_Name: PostBtn
   m_TagString: Untagged
@@ -8655,9 +8656,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1983808849}
-        m_TargetAssemblyTypeName: testingNetworkManager, Assembly-CSharp
-        m_MethodName: Register
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: posttest, Assembly-CSharp
+        m_MethodName: post
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8705,6 +8706,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1839324426}
   m_CullTransparentMesh: 1
+--- !u!114 &1839324431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839324426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56a67cb524730244a02ef333d48e057, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  userIDInputField: {fileID: 611267369}
+  expiryInputField: {fileID: 985449013}
+  issuerName: {fileID: 0}
 --- !u!1 &1855645860
 GameObject:
   m_ObjectHideFlags: 0
@@ -9542,6 +9558,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 2169622159
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
 --- !u!224 &1983808848

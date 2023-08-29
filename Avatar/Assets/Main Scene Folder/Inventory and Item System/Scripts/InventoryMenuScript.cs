@@ -10,7 +10,7 @@ public class InventoryMenuScript : MonoBehaviour
 
     public void PickUpItem(int id)
     {
-        int playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+        int playerID = LoginController.instance.verifiedUsername.GetHashCode();
         Debug.Log(itemsToPickUp.Length);
         bool result = inventoryManager.AddItem(itemsToPickUp[id], true, playerID);
         if (result == true)

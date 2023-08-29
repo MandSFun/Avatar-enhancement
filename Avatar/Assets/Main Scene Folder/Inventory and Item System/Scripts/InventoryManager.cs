@@ -31,7 +31,7 @@ public class InventoryManager : MonoBehaviour
         instance = this;
         try
         {
-            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+            playerID = LoginController.instance.verifiedUsername.GetHashCode();
         }
         catch(System.Exception e)
         {
@@ -99,7 +99,7 @@ public class InventoryManager : MonoBehaviour
                 int weaponID = ItemToHash(item);
                 try
                 {
-                    playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+                    playerID = LoginController.instance.verifiedUsername.GetHashCode();
                 }
                 catch (System.Exception e)
                 {

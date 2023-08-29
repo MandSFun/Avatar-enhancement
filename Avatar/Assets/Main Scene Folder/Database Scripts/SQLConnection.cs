@@ -34,9 +34,9 @@ public class SQLConnection : MonoBehaviour
     void Start()
     {
         //get IP address of computer
-        if (LoginController.Instance.IPAddress != null)
+        if (LoginController.instance.IPAddress != null)
         {
-            IPAddress = LoginController.Instance.IPAddress;
+            IPAddress = userdatapersist.Instance.IPAdd;
         }
         else
         {
@@ -56,26 +56,20 @@ public class SQLConnection : MonoBehaviour
     {
         if (!initialConfigSuccess)
         {
-            adminConString = "Data Source=" + IPAddress + ";Initial Catalog=master;User ID=sa;Password=D5taCard;";
+            adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject ;User ID=sa;Password=D5taCard;";
             SqlConnection con = new SqlConnection(adminConString);
             try
             {
-                LoginController.Instance.CreateNewDB();
+                LoginController.instance.CreateNewDB();
                 con.Open();
-                Debug.Log("SQL server connection successful!");
+                Debug.Log("SQL server initial connection successful!");
                 SQLServerConnected = true;
-                LoginController.Instance.CreateTables();
+                LoginController.instance.CreateTables();
 
-                if (AuthController.instance!= null && AuthController.instance.isNewUser)
-                {
-                    AuthController.instance.CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
-                }
-                else
-                {
-                    // create new user if already registered
-                    AuthController.instance.CreateNewUserAccount(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
-                }
-                ConfigureUserConnectionString(LoginController.Instance.verifiedUsername, LoginController.Instance.verifiedPassword);
+                
+                
+                ConfigureUserConnectionString(userdatapersist.Instance.verifiedUser, userdatapersist.Instance.verifiedPassword);
+               // ConfigureUserConnectionString("sa", "D5taCard");
                 //DisplayWeapons();
 
                 con.Close();
@@ -83,7 +77,7 @@ public class SQLConnection : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("ERROR SQL server connection unsuccessful!");
+                Debug.Log("ERROR SQL server connection unsuccessful!   " + e );
                 SQLServerConnected = false;
             }
 
@@ -95,6 +89,7 @@ public class SQLConnection : MonoBehaviour
     public void ConfigureUserConnectionString(string username, string password)
     {
         userConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=" + username + ";Password=" + password +";";
+        Debug.Log("user con string is : " + userConString);
     }
 
 
@@ -203,7 +198,7 @@ public class SQLConnection : MonoBehaviour
             }
         } catch (Exception e)
         {
-            Debug.Log("(SQL Server) Error adding weapon into DB");
+            Debug.Log("(SQL Server) Error adding weapon into DB " + e);
             SQLServerConnected = false;
         }
 
@@ -237,7 +232,7 @@ public class SQLConnection : MonoBehaviour
             Debug.Log("(SQL server) Weapon added with id: " + weaponid);
         } catch (Exception e)
         {
-            Debug.Log("(SQL Server) Error removing weapon from DB");
+            Debug.Log("(SQL Server) Error removing weapon from DB " + e);
             SQLServerConnected = false;
         }
     }
@@ -311,7 +306,7 @@ public class SQLConnection : MonoBehaviour
             }
         } catch (Exception e)
         {
-            Debug.Log("(SQL Server) Error updating player location");
+            Debug.Log("(SQL Server) Error updating player location " + e);
             SQLServerConnected = false;
         }
     }
@@ -375,7 +370,7 @@ public class SQLConnection : MonoBehaviour
             }
         } catch (Exception e)
         {
-            Debug.Log("(SQL Server) Error getting starting items");
+            Debug.Log("(SQL Server) Error getting starting items " + e);
             SQLServerConnected = false;
         }
 
@@ -424,7 +419,7 @@ public class SQLConnection : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("(SQL Server) Error getting starting player location");
+            Debug.Log("(SQL Server) Error getting starting player location " + e);
             SQLServerConnected = false;
         }
 

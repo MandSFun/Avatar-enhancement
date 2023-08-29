@@ -13,7 +13,7 @@ public class InventoryUpdateScript : MonoBehaviour
         int playerID;
         try
         {
-            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+            playerID = LoginController.instance.verifiedUsername.GetHashCode();
         }
         catch (System.Exception e)
         {

@@ -45,7 +45,7 @@ public class PickableItemScript : MonoBehaviour
         animator = GetComponent<Animator>();
         try
         {
-            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+            playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
         }
         catch (System.Exception e)
         {

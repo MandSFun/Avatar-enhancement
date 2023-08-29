@@ -7,6 +7,6 @@ public class LauchDockerNetwork : MonoBehaviour
     public void runDocker()
     {
         Dictionary<string, string> arguments = new Dictionary<string, string>();
-        LoginController.Instance.StartAcaPyInstanceAsync(arguments);
+        LoginController.instance.StartAcaPyInstanceAsync(arguments);
     }
 }

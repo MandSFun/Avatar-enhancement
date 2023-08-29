@@ -12,7 +12,7 @@ public class PlayerLocationUpdate : MonoBehaviour
     {
         try
         {
-            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+            playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
         }
         catch (System.Exception e)
         {
@@ -41,6 +41,9 @@ public class PlayerLocationUpdate : MonoBehaviour
      int zpos = (int)Math.Ceiling(transform.position.z);
      DatabaseScript.instance.UpdatePlayerLocation(playerID, xpos, ypos, zpos);
      if (SQLConnection.instance.SQLServerConnected)
+        {
             SQLConnection.instance.UpdatePlayerLocation(playerID, xpos, ypos, zpos);
+        }
+           
     }
 }

@@ -129,7 +129,7 @@ public class PlayerInteractable : NetworkBehaviour
         int playerID;
         try
         {
-            playerID = LoginController.Instance.verifiedUsername.GetHashCode();
+            playerID = LoginController.instance.verifiedUsername.GetHashCode();
         }
         catch (System.Exception e)
         {

@@ -3577,6 +3577,8 @@ MonoBehaviour:
   verifiedUsername: 
   verifiedPassword: 
   IPAddress: 
+  vu: 
+  vp: 
 --- !u!114 &1610381847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3902,6 +3904,8 @@ MonoBehaviour:
   verifiedUsername: 
   verifiedPassword: 
   IPAddress: 
+  vu: 
+  vp: 
 --- !u!1 &1670807741
 GameObject:
   m_ObjectHideFlags: 0
@@ -4245,6 +4249,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1897170620}
   m_CullTransparentMesh: 1
+--- !u!1 &1915902361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1915902363}
+  - component: {fileID: 1915902362}
+  m_Layer: 0
+  m_Name: UserDataPersistence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1915902362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915902361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c032d163048814419821cc7a05d372f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  verifiedUser: 
+  verifiedPassword: 
+  IPAdd: 
+--- !u!4 &1915902363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915902361}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 287.92194, y: 216.24669, z: -21.990799}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1983808844
 GameObject:
   m_ObjectHideFlags: 0
@@ -4276,6 +4327,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 746022882
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
 --- !u!224 &1983808848
@@ -4582,6 +4636,8 @@ MonoBehaviour:
   verifiedUsername: 
   verifiedPassword: 
   IPAddress: 
+  vu: 
+  vp: 
 --- !u!1 &2025043798
 GameObject:
   m_ObjectHideFlags: 0

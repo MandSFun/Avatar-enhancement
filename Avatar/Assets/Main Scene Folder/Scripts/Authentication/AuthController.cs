@@ -248,14 +248,14 @@ public class AuthController : NetworkBehaviour
         SqlConnection con = new SqlConnection(adminConString);
         try
         {
-            LoginController.Instance.CreateNewDB();
+            LoginController.instance.CreateNewDB();
             con.Open();
             Debug.Log("SQL server connection successful!");
 
-            LoginController.Instance.CreateTables();
+            LoginController.instance.CreateTables();
 
            
-            CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
+            LoginController.instance.CreateNewUserAccount(AuthController.instance.registeredUsername, AuthController.instance.registeredPassword);
             UpdateUserInfoTable(username, password) ;
             con.Close();
 
@@ -297,48 +297,5 @@ public class AuthController : NetworkBehaviour
     
 
 
-    public void CreateNewUserAccount(string username, string password)
-    {
-
-        string DBname = "AvatarProject";
-        string connstring = "Data Source=" + IPAddress + " ;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        try
-        {
-            using (SqlConnection connection = new SqlConnection(connstring))
-            {
-
-                connection.Open();
-
-
-                using (var command = connection.CreateCommand())
-                {
-                    /*
-                     * IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' username ' AND type = 'S') BEGIN
-                         CREATE LOGIN   username  WITH PASSWORD ='password' , CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF; 
-                        USE  AvatarProject; CREATE USER  username  FOR LOGIN  username ; 
-                        USE  AvatarProject ; GRANT SELECT, INSERT, UPDATE, DELETE TO  username  END;
-
-                     * 
-                     */
-
-                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' " + username + " ' AND type = 'S') " +
-                        "BEGIN CREATE LOGIN   " + username + " WITH PASSWORD = '" + password + "' ," +
-                        " CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF   USE AvatarProject; CREATE USER " + username + " FOR LOGIN " + username + " ;" +
-                        " USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "  END; ";
-
-                    command.ExecuteNonQuery();
-                }
-
-                connection.Close();
-
-
-            }
-        }
-        catch (Exception e)
-        {
-            UnityEngine.Debug.Log("(SQL server) Error creating new account:  " + e);
-        }
-
-    }
+    
 }

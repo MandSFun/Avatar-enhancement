@@ -5,8 +5,16 @@ using System.Data.SqlClient;
 using System.Net;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 using UnityEngine.Windows;
 using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Data.SqlClient;
+using System.Net.Http;
+using System.Text;
+using I18N.Common;
 
 public class CredentialIssuer : MonoBehaviour
 {
@@ -15,13 +23,14 @@ public class CredentialIssuer : MonoBehaviour
     [SerializeField] private TMP_InputField userIDInputField;
     [SerializeField] private TMP_InputField expiryInputField;
     [SerializeField] private TMP_Text issuerName;
+    [SerializeField] GameObject successfulWindow;
     private string IPAddress;
     private string issuer;
     // Start is called before the first frame update
     void Start()
     {
-        IPAddress = LoginController.Instance.IPAddress;
-        issuer = LoginController.Instance.verifiedUsername;
+        IPAddress = LoginController.instance.IPAddress;
+        issuer = LoginController.instance.verifiedUsername;
         issuerName.text = issuer;
     }
 
@@ -49,7 +58,51 @@ public class CredentialIssuer : MonoBehaviour
         }
         
         int CredentialID = (userID+issuer+expiryInputField.text).GetHashCode();
-        AddCredentialToServer(issuer, CredentialID, userID, expiryDate);
+       
+        sendReq(userID, CredentialID, userID, expiryDate);
+    }
+
+
+    public async void sendReq(string issuer, int credentialID, string userID, int expiry)
+    {
+       
+            string url = "http://localhost:11001/schemas?create_transaction_for_endorser=false";
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+            
+
+            // Prepare the JSON payload
+            string jsonPayload = $@"{{
+                ""attributes"": [
+                    ""{expiry.ToString()}""
+                ],
+                ""schema_name"": ""{credentialID.ToString()}"",
+                ""schema_version"": ""1.0""
+            }}";
+
+            // Set headers
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                // Create the request content
+                StringContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                // Send the POST request
+                HttpResponseMessage response = await httpClient.PostAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseBody);
+                    successfulWindow.SetActive(true);
+                    AddCredentialToServer(issuer, credentialID, userID, expiry);
+            }
+                else
+                {
+                    Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+                }
+            }
         
     }
 
@@ -65,8 +118,8 @@ public class CredentialIssuer : MonoBehaviour
             {
 
                 connection.Open();
-                LoginController.Instance.CreateNewDB();
-                LoginController.Instance.CreateTables();
+                LoginController.instance.CreateNewDB();
+                LoginController.instance.CreateTables();
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = "INSERT INTO IssuedCredentials (CredentialID,Issuer,UserID,Expiry) VALUES (" + credentialID + ",'" + issuer + "','" + userID + "'," + expiry + ");";
@@ -85,4 +138,7 @@ public class CredentialIssuer : MonoBehaviour
         }
         return false;
     }
+
+
+   
 }

@@ -32,17 +32,21 @@ public class LoginController : MonoBehaviour
     private string ledgerUrl = "http://localhost:9000";
     private string registrationEndpoint = "/register";
     private static readonly HttpClient client = new HttpClient();
-    public static LoginController Instance;
+    public static LoginController instance;
     public string verifiedUsername;
     public string verifiedPassword;
     public string IPAddress;
+    public string vu;
+    public string vp;
   
 
 
 
     public void Awake()
     {
-        Instance = this;
+
+
+        instance = this;
 
         try
         {
@@ -67,26 +71,32 @@ public class LoginController : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     public async void Login(){
-     
+
         //Get name and password from input fields
-        string name = nameInputField.text;
-        string password = passwordInputField.text;
+        string nameInput = nameInputField.text;
+        string passwordInput = passwordInputField.text;
         IPAddress = IPAddressInputField.text;
+        
 
         //Add check that name is not already on the blockchain
-        StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl, true)); 
+        StartCoroutine(HandleLoginQueryResult(nameInput, passwordInput, ledgerUrl, true)); 
+    }
+
+    public void OnDestroy()
+    {
+        UnityEngine.Debug.Log( "(ATTENTION) logincontroller destroyed!");
     }
 
     public async void AccessAdminPanel()
     {
 
         //Get name and password from input fields
-        string name = nameInputField.text;
-        string password = passwordInputField.text;
+        string nameInput = nameInputField.text;
+        string passwordInput = passwordInputField.text;
         IPAddress = IPAddressInputField.text;
 
         //Add check that name is not already on the blockchain
-        StartCoroutine(HandleLoginQueryResult(name, password, ledgerUrl, false));
+        StartCoroutine(HandleLoginQueryResult(nameInput, passwordInput, ledgerUrl, false));
     }
 
     public void CreateNewDB()
@@ -294,17 +304,28 @@ public class LoginController : MonoBehaviour
             UnityEngine.Debug.Log("DID: " + arguments["DID"]);
             UnityEngine.Debug.Log("Verkey: " + arguments["VERKEY"]);
 
-            //configure the SQL server account as the user
-            verifiedUsername = name;
-            verifiedPassword = password;
+            
 
-            bool isAuthenticated = AuthenticateWithSQLServer(verifiedUsername,verifiedPassword);
+            bool isAuthenticated = AuthenticateWithSQLServer(name,password);
 
             // Load Scene for choosing host/client
             if (isAuthenticated)
             {
+
+                //configure the SQL server account as the user
+                verifiedUsername = name;
+                verifiedPassword = password;
+                userdatapersist.Instance.verifiedPassword = verifiedPassword;
+                userdatapersist.Instance.verifiedUser = verifiedUsername;
+                userdatapersist.Instance.IPAdd = IPAddress;
+
+                UnityEngine.Debug.Log("Verified values are " + verifiedUsername + " to " + verifiedPassword);
+
+
                 if (loadMainScene)
                 {
+                    //configure the SQL server account as the user
+                    
                     Loader.Load(Loader.Scene.Main);
                 }
                 else
@@ -437,7 +458,7 @@ public class LoginController : MonoBehaviour
         finally
         {
             process.Close();
-            process.Dispose();
+           // process.Dispose();
         }
     }
 
@@ -530,5 +551,50 @@ public class LoginController : MonoBehaviour
     /// </summary>
     public void RedirectToRegistration(){
         Loader.Load(Loader.Scene.Registration);
+    }
+
+    public void CreateNewUserAccount(string username, string password)
+    {
+
+        string DBname = "AvatarProject";
+        string connstring = "Data Source=" + IPAddress + " ;Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
+        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connstring))
+            {
+
+                connection.Open();
+
+
+                using (var command = connection.CreateCommand())
+                {
+                    /*
+                     * IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' username ' AND type = 'S') BEGIN
+                         CREATE LOGIN   username  WITH PASSWORD ='password' , CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF; 
+                        USE  AvatarProject; CREATE USER  username  FOR LOGIN  username ; 
+                        USE  AvatarProject ; GRANT SELECT, INSERT, UPDATE, DELETE TO  username  END;
+
+                     * 
+                     */
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = ' " + username + " ' AND type = 'S') " +
+                        "BEGIN CREATE LOGIN   " + username + " WITH PASSWORD = '" + password + "' ," +
+                        " CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF   USE AvatarProject; CREATE USER " + username + " FOR LOGIN " + username + " ;" +
+                        " USE AvatarProject; GRANT SELECT, INSERT, UPDATE, DELETE TO " + username + "  END; ";
+
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.Log("(SQL server) Error creating new account:  " + e);
+        }
+
     }
 }
