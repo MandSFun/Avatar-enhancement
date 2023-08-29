@@ -29,12 +29,12 @@ namespace StarterAssets
         [Range(0.0f, 0.3f)]
         [SerializeField] private float RotationSmoothTime = 0.1f;
         [SerializeField] private float SpeedChangeRate = 10.0f;
-        public GameObject inventorySlots; 
+        public GameObject inventorySlots;
 
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
-        
+
         [Space(10)]
 
         public float JumpHeight = 1.2f;
@@ -69,8 +69,8 @@ namespace StarterAssets
         [SerializeField] private GameObject bloodGush;
 
         [SerializeField] private Transform bloodGushOrigin;
- [Header("Chat")]
- public GameObject chatholder;
+        [Header("Chat")]
+        public GameObject chatholder;
         [Header("Cinemachine")]
 
         CinemachineComponentBase componentBase;
@@ -123,7 +123,7 @@ namespace StarterAssets
         public CinemachineVirtualCamera ThirdPersonCam;
         public CinemachineVirtualCamera FirstPersonCam;
         public GameObject carCamera;
-        public static ThirdPersonController  instance; 
+        public static ThirdPersonController instance;
 
         private const float thresehold = 0.01f;
         private const float speedOffset = 0.1f;
@@ -147,7 +147,7 @@ namespace StarterAssets
         {
             //Reference main cam;
             mainCamera = Camera.main.transform;
-            
+
         }
 
         private void Start()
@@ -160,37 +160,13 @@ namespace StarterAssets
             input = GetComponent<StarterAssetsInputs>();
             //playerNameText = GameObject.FindGameObjectWithTag("nop").GetComponentInChildren<TMP_Text>();
 
-            
+
             AssignAnimationIDs();
 
             // reset our timeouts on start
             jumpWait = JumpTimeout;
             fallTimeoutDelta = FallTimeout;
             transform.position = new Vector3(0, 0, 0);
-            if (IsOwner && IsClient)
-            {
-                //bloodGush.gameObject.SetActive(false);
-
-                if (ThirdPersonCam == null && FirstPersonCam == null)
-                {
-                    ThirdPersonCam = GameObject.FindGameObjectWithTag("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
-                    ThirdPersonCam.Follow = transform.GetChild(0).transform;
-
-                    componentBase = ThirdPersonCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
-                    FirstPersonCam = GameObject.FindGameObjectWithTag("FirstPersonCamera").GetComponent<CinemachineVirtualCamera>();
-                    FirstPersonCam.Follow = transform.GetChild(0).transform;
-
-                }
-
-
-                if (FirstPersonCam == null)
-                {
-                    Debug.Log(GameObject.FindGameObjectWithTag("FirstPersonCamera"));
-
-                }
-
-
-            }
 
 
         }
@@ -198,7 +174,7 @@ namespace StarterAssets
         private void Update()
         {
             if (IsOwner)
-            { 
+            {
                 //hasAnim = TryGetComponent(out anim);
                 if (!isDead)
                 {
@@ -208,7 +184,7 @@ namespace StarterAssets
                         JumpAndGravity();
                         Move();
                     }
-                  
+
 
                     if (firstpersonstatus == false)
                     {
@@ -232,7 +208,7 @@ namespace StarterAssets
                             // FirstPersonCam.gameObject.SetActive(true);
                             ThirdPersonCam.Priority = 1;
                             Cursor.lockState = CursorLockMode.None;
-                              firstpersonstatus = false;
+                            firstpersonstatus = false;
                         }
 
 
@@ -259,13 +235,37 @@ namespace StarterAssets
 
             //isClient checks if current instance is client,IsOwner checks if client owns the object,
             //ensure playerinput is only enabled for client instance;
+            if (IsOwner)
+            {
+                //bloodGush.gameObject.SetActive(false);
+
+                if (ThirdPersonCam == null && FirstPersonCam == null)
+                {
+                    ThirdPersonCam = GameObject.FindGameObjectWithTag("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
+                    ThirdPersonCam.Follow = transform.GetChild(0).transform;
+
+                    componentBase = ThirdPersonCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
+                    FirstPersonCam = GameObject.FindGameObjectWithTag("FirstPersonCamera").GetComponent<CinemachineVirtualCamera>();
+                    FirstPersonCam.Follow = transform.GetChild(0).transform;
+
+                }
+
+
+                if (FirstPersonCam == null)
+                {
+                    Debug.Log(GameObject.FindGameObjectWithTag("FirstPersonCamera"));
+
+                }
+
+
+            }
 
 
 
             if (IsOwner)
             {
 
-          
+
                 playerInput = GetComponent<PlayerInput>();
                 playerInput.enabled = true;
                 //FirstPersonCam.gameObject.SetActive(false);

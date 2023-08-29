@@ -155,7 +155,7 @@ public class PrometeoCarController : NetworkBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
+    { 
         //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
         //gameObject. Also, we define the center of mass of the car with the Vector3 given
         //in the inspector.
@@ -281,7 +281,7 @@ public class PrometeoCarController : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {if(!IsOwner) return;
         //throttleInput = Input.GetAxis("Vertical");
         // steeringInput = Input.GetAxis("Horizontal");
 

@@ -48,9 +48,9 @@ public class MultiplayerUI : MonoBehaviour
     public string GetLocalIPAddress()
     {
         string hostName = Dns.GetHostName();
+       
         hostIP = Dns.GetHostEntry(hostName).AddressList[1].ToString();
 
-        ipAddressText.text = hostIP;
         //ipAddress = hostIP;
         return ipAddress;
 

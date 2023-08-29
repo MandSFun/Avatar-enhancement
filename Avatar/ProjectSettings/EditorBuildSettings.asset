@@ -20,14 +20,17 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Login.unity
     guid: 93eb6f3245e0d074cb6dc63f30d9ce5d
-  - enabled: 1
-    path: Assets/Main Scene Folder/Chat system/Scenes/Main.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0
+    path: Assets/Main game/Chat system/Scenes/ChatScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Racing game/racingmap.unity
+    guid: 1c5459078fe6256468e5ab30107f1707
+  - enabled: 1
     path: Assets/Scenes/Shooting Game.unity
     guid: bc0fb3add49861945bbd7340e5f2954f
   - enabled: 0
-    path: Assets/Main Scene Folder/Chat system/Prefabs/Chat Manager.prefab
+    path: Assets/Main game/Chat system/Prefabs/Chat Manager.prefab
     guid: 19d25ff69992b4e4bbe65af72fe89a0b
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
