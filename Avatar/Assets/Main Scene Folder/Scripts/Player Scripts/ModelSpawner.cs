@@ -10,17 +10,19 @@ public class ModelSpawner : NetworkBehaviour
     private List<GameObject> spawnedPrefabs = new List<GameObject>();
     [SerializeField] private Vector3 spawnPosition = new Vector3(0.18f, -0.74f, 4.41f);
     [SerializeField] private LayerMask layer;
-    
+
     public delegate void VehicleSpawned(bool value);
     public static event VehicleSpawned OnVehicleSpawned;
 
     public bool spawned = false;
     private ThirdPersonController playerController;
-       [SerializeField] private GameObject sceneviewCamera;
-       Camera svcCamera;
-    private void Start(){
-         sceneviewCamera  = GameObject.FindGameObjectWithTag("Sceneview");
-          svcCamera = sceneviewCamera.GetComponent<Camera>();
+    [SerializeField] private GameObject sceneviewCamera;
+    Camera svcCamera;
+    bool interactstatus = false;
+    private void Start()
+    {
+        sceneviewCamera = GameObject.FindGameObjectWithTag("Sceneview");
+        svcCamera = sceneviewCamera.GetComponent<Camera>();
     }
     private void Update()
     {
@@ -68,9 +70,9 @@ public class ModelSpawner : NetworkBehaviour
         spawnedPrefabs.Add(spawnedModel);
 
         PrometeoCarController carController = spawnedModel.GetComponent<PrometeoCarController>();
-      
+
         spawnedModel.GetComponent<NetworkObject>().Spawn();
-   
+
 
     }
 
@@ -82,19 +84,35 @@ public class ModelSpawner : NetworkBehaviour
             GameObject destroy = spawnedPrefabs[0];
             Destroy(destroy);
             destroy.GetComponent<NetworkObject>().Despawn();
-    
+
             spawnedPrefabs.RemoveAt(0);
             Destroy(destroy);
         }
     }
     public void SetPlayer(GameObject player)
-{
-    playerController = player.GetComponent<ThirdPersonController>();
-}
- public void isSpawned(bool value)
+    {
+        playerController = player.GetComponent<ThirdPersonController>();
+    }
+    public void isSpawned(bool value)
     {
         spawned = value;
         OnVehicleSpawned?.Invoke(spawned);
+    }
+    private void OnEnable()
+    {
+        NPCInteractable.OnInteractStatusChange += HandleStatusChange;
+    }
+
+    private void OnDisable()
+    {
+        NPCInteractable.OnInteractStatusChange -= HandleStatusChange;
+    }
+
+    private void HandleStatusChange(bool value)
+    {
+        interactstatus = value;
+        Debug.Log("interacted" + interactstatus);
+
     }
 
 }

@@ -43,7 +43,6 @@ public class NetworkManagerUI : NetworkBehaviour
     private void Start()
     { //network = NetworkManager.Singleton;
    
-        NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
         NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
     }
     private void Destroy()
@@ -55,15 +54,9 @@ public class NetworkManagerUI : NetworkBehaviour
     public void Leave()
     {
         NetworkManager.Singleton.Shutdown();
-        if (IsClient) NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+        if (!IsServer) NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
 
-
-        if (NetworkManager.Singleton.IsServer)
-        {
-            NetworkManager.Singleton.ConnectionApprovalCallback -= ApprovalCheck;
-        }
-
-        Holder.SetActive(true);
+     SceneManager.LoadScene("Main");
 
     }
     public void Client()
@@ -128,6 +121,7 @@ public class NetworkManagerUI : NetworkBehaviour
 
         transport.ConnectionData.Address = ipad;
     }
+    
     private void HandleClientDisconnect(ulong clientId)
     {
         // if (NetworkManager.Singleton.IsServer)

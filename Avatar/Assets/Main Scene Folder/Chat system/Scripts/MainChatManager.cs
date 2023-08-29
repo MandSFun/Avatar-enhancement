@@ -7,9 +7,10 @@ using StarterAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class ChatManager : NetworkBehaviour
+
+public class MainChatManager : NetworkBehaviour
 {
-    public static ChatManager Singleton;
+    public static MainChatManager Singleton;
 
     [SerializeField] ChatMessage chatMessagePrefab;
     [SerializeField] CanvasGroup chatContent;
@@ -33,8 +34,8 @@ public class ChatManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
         chatButton.gameObject.SetActive(true);
-       // player = GameObject.FindGameObjectWithTag("Player");
-       // interactingPlayerController = player.GetComponent<PlayerInput>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        interactingPlayerController = player.GetComponent<PlayerInput>();
         string message = "Player " + NetworkManager.Singleton.LocalClientId + " has joined.";
         SendChatMessageServerRpc(message, NetworkManager.Singleton.LocalClientId);
         playerspawned = true;
@@ -53,19 +54,19 @@ public class ChatManager : NetworkBehaviour
             SendChatMessage(chatInput.text);
             chatInput.text = "";
         }
-        // if (playerspawned)
-        // {
-        //     if (chatStatus)
-        //     {
-        //         interactingPlayerController.enabled = false;
-        //         Debug.Log("Set false");
-        //     }
-        //     else
-        //     {
-        //         interactingPlayerController.enabled = true;
-        //         Debug.Log("set true");
-        //     }
-        // }
+        if (playerspawned)
+        {
+            if (chatStatus)
+            {
+                interactingPlayerController.enabled = false;
+
+            }
+            else
+            {
+                interactingPlayerController.enabled = true;
+
+            }
+        }
 
     }
 
@@ -83,9 +84,8 @@ public class ChatManager : NetworkBehaviour
             chatStatus = false;
             holder.SetActive(false);
 
-            //     interactingPlayerController = player.GetComponent<ThirdPersonController>();
-            //interactingPlayerController.enabled = true;
-            Debug.Log("Player input set fasle");
+
+
 
         }
         else

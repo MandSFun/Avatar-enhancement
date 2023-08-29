@@ -8,6 +8,10 @@ public class NPCInteractable : MonoBehaviour, IInteractable {
 
     private Animator animator;
     private NPCHeadLookAt npcHeadLookAt;
+     public delegate void InteractStatus(bool value);
+    public static event InteractStatus OnInteractStatusChange;
+    bool status= false;
+    bool onGoingstatus = false;
 
     private void Awake() {
         animator = GetComponent<Animator>();
@@ -18,9 +22,20 @@ public class NPCInteractable : MonoBehaviour, IInteractable {
         //ChatBubble3D.Create(transform.transform, new Vector3(-.3f, 1.7f, 0f), ChatBubble3D.IconType.Happy, "Hello there!");
 
         //animator.SetTrigger("Talk");
+        int modelLayer = LayerMask.NameToLayer("Model");
+        if(gameObject.layer== modelLayer){
+            if(onGoingstatus){
 
+            SetInteractStatus(true);
+            }
+            else{  SetInteractStatus(true);}
+          
+            
+            return;
+        }
        float playerHeight = 1.7f;
         npcHeadLookAt.LookAtPosition(interactorTransform.position + Vector3.up * playerHeight);
+        
     }
 
     public string GetInteractText() {
@@ -30,5 +45,11 @@ public class NPCInteractable : MonoBehaviour, IInteractable {
     public Transform GetTransform() {
         return transform;
     }
+     public void SetInteractStatus(bool value)
+    {
+        status = value;
+        OnInteractStatusChange?.Invoke(status);
+    }
+    
 
 }
