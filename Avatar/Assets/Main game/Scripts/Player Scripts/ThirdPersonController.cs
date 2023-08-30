@@ -111,6 +111,7 @@ namespace StarterAssets
         private int animJump;
         private int animFreefall;
         private int animMotionSPD;
+      
 
 
 #if ENABLE_INPUT_SYSTEM
