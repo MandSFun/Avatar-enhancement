@@ -368,6 +368,8 @@ public class LoginController : MonoBehaviour
         string adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         SqlConnection con = new SqlConnection(adminConString);
         bool dataFound = false;
+        CreateNewDB();
+        CreateTables();
 
         try
         {

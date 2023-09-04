@@ -125,7 +125,8 @@ public class CredentialIssuer : MonoBehaviour
     {
         string adminConString = "Data Source=" + IPAddress + ";Initial Catalog=AvatarProject;User ID=sa;Password=D5taCard;";
         SqlConnection con = new SqlConnection(adminConString);
-        
+        LoginController.instance.CreateNewDB();
+        LoginController.instance.CreateTables();
 
         try
         {
@@ -133,8 +134,7 @@ public class CredentialIssuer : MonoBehaviour
             {
 
                 connection.Open();
-                LoginController.instance.CreateNewDB();
-                LoginController.instance.CreateTables();
+               
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = "INSERT INTO IssuedCredentials (CredentialID,Issuer,UserID,Expiry) VALUES (" + credentialID + ",'" + issuer + "','" + userID + "'," + expiry + ");";
