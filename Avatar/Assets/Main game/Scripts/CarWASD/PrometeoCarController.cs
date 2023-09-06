@@ -486,11 +486,12 @@ public class PrometeoCarController : NetworkBehaviour
     //
 
     //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
+ 
     public void TurnLeft()
     {
         steeringAxis = steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
         if (steeringAxis < -1f)
-        {
+        {   
             steeringAxis = -1f;
         }
         var steeringAngle = steeringAxis * maxSteeringAngle;

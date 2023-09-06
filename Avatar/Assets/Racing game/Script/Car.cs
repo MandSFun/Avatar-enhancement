@@ -6,7 +6,7 @@ using Cinemachine;
 public class Car : NetworkBehaviour
 {
      [SerializeField] private CinemachineVirtualCamera playerCamera;
-        [SerializeField] private float positionrange = 5f;
+        [SerializeField] private float positionrange = 10f;
      public override void OnNetworkSpawn(){
         if (playerCamera == null)
             { if(!IsOwner)return;
