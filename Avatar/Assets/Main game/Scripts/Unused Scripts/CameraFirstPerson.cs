@@ -22,17 +22,35 @@ public class CameraFirstPerson : MonoBehaviour
     private Vector3 oldAngles;
     private bool revertedPosition = true;
     [SerializeField] GameObject hitBox;
+    [SerializeField] GameObject machineGunObj;
     void Start()
     {
-        
+        machineGunObj.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         
     }
 
     void Update()
     {
+        if (planeCameraController.instance == null || planeCameraController.instance.index == 4)
+        {
+            HandleInput();
+        }
+        else
+        {
+            machineGunObj.SetActive(false);
+        }
+        
+
+    }
+
+    public void HandleInput()
+    {
+
+        machineGunObj.SetActive(true) ;
+
         if (Input.GetKeyDown(KeyCode.Space))
-            {
+        {
             isCrouching = !isCrouching;
         }
 
@@ -46,7 +64,7 @@ public class CameraFirstPerson : MonoBehaviour
         }
         else
         {
-            
+
             if (!revertedPosition)
             {
                 transform.eulerAngles = oldAngles;
@@ -70,7 +88,7 @@ public class CameraFirstPerson : MonoBehaviour
             {
                 transform.position = transform.position - transform.right * Time.deltaTime * movementSpeed;
             }
-            
+
 
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -100,7 +118,8 @@ public class CameraFirstPerson : MonoBehaviour
             }
         }
 
-    }
+    
+}
 
 
 }

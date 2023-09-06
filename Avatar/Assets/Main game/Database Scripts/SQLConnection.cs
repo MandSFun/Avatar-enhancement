@@ -48,11 +48,7 @@ public class SQLConnection : MonoBehaviour
             Debug.Log(e.ToString());
         }
         
-        
-
-        //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
+       
         
 
     }
@@ -74,8 +70,7 @@ public class SQLConnection : MonoBehaviour
                 
                 
                 ConfigureUserConnectionString(userdatapersist.Instance.verifiedUser, userdatapersist.Instance.verifiedPassword);
-               // ConfigureUserConnectionString("sa", "D5taCard");
-                //DisplayWeapons();
+               
 
                 con.Close();
 
@@ -102,10 +97,7 @@ public class SQLConnection : MonoBehaviour
 
     public void TestConnection()
     {
-        //string connstring = "Server=DESKTOP-2P23NMB;database=AvatarProject;Trusted_Connection=True;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
-        //string connstring = "Data Source=192.168.56.1;Initial Catalog=AvatarProject;User ID=user;Password=user;";
-        //string connstring = "Data Source=10.255.253.29;Initial Catalog=AvatarProject;User ID=SuperAdmin;Password=SuperAdmin;";
+        
         SqlConnection con = new SqlConnection(adminConString);
         
             Debug.Log("Testing SQL Server connection");
@@ -331,25 +323,7 @@ public class SQLConnection : MonoBehaviour
 
                 connection.Open();
                 SQLServerConnected = true;
-                /*
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM weapons WHERE playerid = " + playerID + "AND weaponid = 7;";
-
-                    using (System.Data.IDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader["playerID"] == null)
-                            {
-                                AddWeapon(playerID, 7, 1);
-                            }
-
-                        }
-                        reader.Close();
-                    }
-                }
-                */
+                
 
                 using (var command = connection.CreateCommand())
                 {

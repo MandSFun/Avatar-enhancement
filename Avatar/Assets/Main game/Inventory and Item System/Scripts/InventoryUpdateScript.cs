@@ -13,7 +13,7 @@ public class InventoryUpdateScript : MonoBehaviour
         int playerID;
         try
         {
-            playerID = LoginController.instance.verifiedUsername.GetHashCode();
+            playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
         }
         catch (System.Exception e)
         {
@@ -27,12 +27,22 @@ public class InventoryUpdateScript : MonoBehaviour
             startingItems = SQLConnection.instance.GetStartingItems(playerID);
             Debug.Log("Successfully loaded data from SQL server");
         }
-        //add the backpack item 
-        InventoryManager.instance.AddItem(backpackItem, false, playerID);
+        
+        bool hasBackpack = false;
         foreach (var item in startingItems)
         {
+            if (item.name == backpackItem.name)
+            {
+                hasBackpack = true;
+            }
             InventoryManager.instance.AddItem(item, false, playerID);
             Debug.Log("added item   " + item.name);
+        }
+
+        if (!hasBackpack)
+        {
+            //add the backpack item 
+            InventoryManager.instance.AddItem(backpackItem, true, playerID);
         }
         InventoryManager.instance.ChangeSelectedSlot(1);
     }

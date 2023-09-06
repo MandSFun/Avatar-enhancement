@@ -32,8 +32,8 @@ public class CredentialIssuer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        IPAddress = LoginController.instance.IPAddress;
-        issuer = LoginController.instance.verifiedUsername;
+        IPAddress = userdatapersist.Instance.IPAdd;
+        issuer = userdatapersist.Instance.verifiedUser;
         issuerName.text = issuer;
     }
 
@@ -77,10 +77,11 @@ public class CredentialIssuer : MonoBehaviour
 
     public async void sendReq(string issuer, int credentialID, string userID, int expiry)
     {
-       
-            string url = "http://localhost:11001/schemas?create_transaction_for_endorser=false";
 
-            using (HttpClient httpClient = new HttpClient())
+        //string url = "http://localhost:11001/schemas?create_transaction_for_endorser=false";
+        string url = "http://" + IPAddress+ ":11001/schemas?create_transaction_for_endorser=false";
+
+        using (HttpClient httpClient = new HttpClient())
             {
             
 

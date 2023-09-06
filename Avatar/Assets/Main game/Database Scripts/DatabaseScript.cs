@@ -202,28 +202,7 @@ public class DatabaseScript : MonoBehaviour
         {
 
             connection.Open();
-            /*
-            using (var command = connection.CreateCommand())
-            {
-
-                
-                command.CommandText = "SELECT * FROM weapons WHERE playerid = " + playerID + "AND weaponid = 7;";
-
-                using (System.Data.IDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader["playerID"] == null)
-                        {
-                            AddWeapon(playerID, 7, 1);
-                        }
-
-                    }
-                    reader.Close();
-                }
-            }
-            */
-
+       
 
             using (var command = connection.CreateCommand())
             {

@@ -27,11 +27,11 @@ public class LoginController : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField; 
     [SerializeField] GameObject popupWindow;
     [SerializeField] TMP_Text windowMessage;
-
+    public bool isHost;
     public GameObject parentPopupWindow;
     private GameObject errorWindow;
     private GameObject successfulLoginWindow;
-    private string ledgerUrl = "http://localhost:9000";
+    private string ledgerUrl;
     private string registrationEndpoint = "/register";
     private static readonly HttpClient client = new HttpClient();
     public static LoginController instance;
@@ -48,10 +48,11 @@ public class LoginController : MonoBehaviour
 
 
         instance = this;
-
+        isHost = false;
         try
         {
-            IPAddress = AuthController.instance.IPAddress;
+            string hostName = Dns.GetHostName();
+            IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
             IPAddressInputField.text = AuthController.instance.IPAddress;
             nameInputField.text = AuthController.instance.registeredUsername;  
         }
@@ -63,7 +64,7 @@ public class LoginController : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-
+        ledgerUrl = "http://" + IPAddress + ":9000";
 
     }
 
@@ -84,9 +85,9 @@ public class LoginController : MonoBehaviour
             string nameInput = nameInputField.text;
             string passwordInput = passwordInputField.text;
             IPAddress = IPAddressInputField.text;
+            
 
-
-            //Add check that name is not already on the blockchain
+    //Add check that name is not already on the blockchain
             StartCoroutine(HandleLoginQueryResult(nameInput, passwordInput, ledgerUrl, true));
         }
         
@@ -342,8 +343,12 @@ public class LoginController : MonoBehaviour
                 {
                     SceneManager.LoadSceneAsync("Admin Panel");
                 }
-                
-                StartAcaPyInstanceAsync(arguments);
+                //should only be run if they are the host
+                if (userdatapersist.Instance.isHost)
+                {
+                    StartAcaPyInstanceAsync(arguments);
+                }
+               
                 request.Dispose();
             }
             else

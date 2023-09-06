@@ -50,7 +50,7 @@ public class AuthController : NetworkBehaviour
     public string IPAddress;
     public bool isNewUser = false;
 
-    private string ledgerUrl = "http://localhost:9000";
+    private string ledgerUrl ;
     private string registrationEndpoint = "/register";
 
     private static readonly HttpClient client = new HttpClient();
@@ -58,10 +58,10 @@ public class AuthController : NetworkBehaviour
     private void Awake()
     {
         instance = this;
-        string hostName = Dns.GetHostName();
-        IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+        IPAddress = LoginController.instance.IPAddress;
         IPAddressInputField.text = IPAddress;
         DontDestroyOnLoad(gameObject);
+        ledgerUrl = "http://" + IPAddress + ":9000";
     }
 
     /// <summary>

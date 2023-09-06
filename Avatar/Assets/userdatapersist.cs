@@ -22,4 +22,5 @@ public class userdatapersist : MonoBehaviour
     public string verifiedUser = "";
     public string verifiedPassword = "";
     public string IPAdd = "";
+    public bool isHost = true;
 }

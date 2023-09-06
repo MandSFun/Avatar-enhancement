@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,16 +19,23 @@ public class NetworkStatusIconScript : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        connectedIPAddress = SQLConnection.instance.IPAddress;
-        IPTextField.text = "Server IP: " + connectedIPAddress;
-        RawImage image = this.GetComponent<RawImage>();
-        if (SQLConnection.instance.SQLServerConnected)
+        try
         {
-            image.color = Color.green;
-        }
-        else
+            connectedIPAddress = SQLConnection.instance.IPAddress;
+            IPTextField.text = "Server IP: " + connectedIPAddress + "   Player ID: " + userdatapersist.Instance.verifiedUser.GetHashCode();
+            RawImage image = this.GetComponent<RawImage>();
+            if (SQLConnection.instance.SQLServerConnected)
+            {
+                image.color = Color.green;
+            }
+            else
+            {
+                image.color = Color.red;
+            }
+        }catch (Exception ex)
         {
-            image.color = Color.red;
+            //Debug.LogException(ex);
         }
+        
     }
 }

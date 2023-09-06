@@ -31,7 +31,7 @@ public class InventoryManager : MonoBehaviour
         instance = this;
         try
         {
-            playerID = LoginController.instance.verifiedUsername.GetHashCode();
+            playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
         }
         catch(System.Exception e)
         {
@@ -56,7 +56,7 @@ public class InventoryManager : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Period) && selectedSlot != 5)
+        if (Input.GetKeyDown(KeyCode.Period) && selectedSlot != 4)
         {
 
             ChangeSelectedSlot(selectedSlot + 1);
@@ -99,7 +99,7 @@ public class InventoryManager : MonoBehaviour
                 int weaponID = ItemToHash(item);
                 try
                 {
-                    playerID = LoginController.instance.verifiedUsername.GetHashCode();
+                    playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
                 }
                 catch (System.Exception e)
                 {
