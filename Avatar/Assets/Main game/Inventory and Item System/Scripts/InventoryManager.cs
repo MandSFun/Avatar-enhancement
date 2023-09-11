@@ -130,7 +130,7 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    public bool AddItem(Item item, bool isNewItem, int playerID)
+    public void AddItem(Item item, bool isNewItem, int playerID)
     {
         if (isNewItem)
         {
@@ -146,7 +146,7 @@ public class InventoryManager : MonoBehaviour
             {
                 itemInSlot.count++;
                 itemInSlot.RefreshCount();
-                return true;
+                return;
             }
 
         }
@@ -161,11 +161,11 @@ public class InventoryManager : MonoBehaviour
                 SpawnNewItemInSlot(item, slot);
                 ChangeSelectedSlot(i);
 
-                return true;
+                return;
             }
 
         }
-        return false;
+        return;
     }
 
     public void SpawnNewItemInSlot(Item item, InventorySlot slot)

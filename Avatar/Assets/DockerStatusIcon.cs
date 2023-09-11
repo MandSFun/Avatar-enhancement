@@ -15,7 +15,8 @@ public class DockerStatusIcon : MonoBehaviour
 
     private void Awake()
     {
-        instance = this; 
+        instance = this;
+        DontDestroyOnLoad(this.gameObject);
     }
     // Update is called once per frame
     void Update()

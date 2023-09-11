@@ -12,15 +12,7 @@ public class InventoryMenuScript : MonoBehaviour
     {
         int playerID = userdatapersist.Instance.verifiedUser.GetHashCode();
         Debug.Log(itemsToPickUp.Length);
-        bool result = inventoryManager.AddItem(itemsToPickUp[id], true, playerID);
-        if (result == true)
-        {
-            Debug.Log("added item");
-        }
-        else
-        {
-            Debug.Log("Item not added");
-        }
+       
     }
 
     public void GetSelectedItem()

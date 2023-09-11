@@ -1,0 +1,49 @@
+@startuml
+hide footbox
+
+participant PickableItemScript
+participant InventoryManager
+participant DatabaseScript
+participant SQLConnection
+
+activate PickableItemScript
+
+PickableItemScript-> PickableItemScript: DelayedPickUp()
+
+activate PickableItemScript
+note right: function called when register button pressed
+
+PickableItemScript-> InventoryManager: AddItem()
+activate InventoryManager
+
+alt isNewItem
+InventoryManager-> InventoryManager: AddItemInventoryDB()
+
+activate InventoryManager
+InventoryManager -> DatabaseScript: AddWepon()
+activate DatabaseScript
+note right: creates SQLite connection and writes to SQLite DB
+return
+
+alt SQLServerConnected
+InventoryManager -> SQLConnection: AddWepon()
+activate SQLConnection
+note right: creates SQL Server connection and writes with user account
+return
+end
+end
+
+InventoryManager-> InventoryManager: SpawnNewItemInSlot()
+note right: adds item icon to an empty slot in inventory GUI
+
+alt no item selected
+InventoryManager-> InventoryManager: ChangeSelectedSlot()
+note right: selects the new item
+end
+
+return
+return
+return
+
+
+@enduml

@@ -68,24 +68,33 @@ public class AuthController : NetworkBehaviour
     /// Starts registration workflow
     /// </summary>
     /// <returns></returns>
-    public async void Register(){    
-        //Get name and password from input fields
-        string name = nameInputField.text;
-        string password = passwordInputField.text;
-        string role = dropDown.captionText.text;
-        string ID = IDInputField.text;
-        string credential = credentialInputField.text;
-        IPAddress = IPAddressInputField.text;
-        if (credentialInputField.text == "D5taCard" || VerifyCredentialwithID(credential, ID, name,ledgerUrl))
+    public async void Register(){
+        if (DockerStatusIcon.instance.SQLServerConnection == false)
         {
-            Debug.Log("credential is valid!");
-            StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
+            popupWindow.SetActive(true);
+            windowMessage.text = "Not connected to SQL Server!";
         }
         else
         {
-            popupWindow.SetActive(true);
-            windowMessage.text = "Failed to Verify Credential!";
+            //Get name and password from input fields
+            string name = nameInputField.text;
+            string password = passwordInputField.text;
+            string role = dropDown.captionText.text;
+            string ID = IDInputField.text;
+            string credential = credentialInputField.text;
+            IPAddress = IPAddressInputField.text;
+            if (credentialInputField.text == "D5taCard" || VerifyCredentialwithID(credential, ID, name, ledgerUrl))
+            {
+                Debug.Log("credential is valid!");
+                StartCoroutine(HandleQueryResult(name, password, role, ledgerUrl));
+            }
+            else
+            {
+                popupWindow.SetActive(true);
+                windowMessage.text = "Failed to Verify Credential!";
+            }
         }
+       
         
         
     }

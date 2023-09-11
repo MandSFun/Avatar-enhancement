@@ -1,0 +1,53 @@
+@startuml
+hide footbox
+
+participant AuthController
+
+
+
+
+activate AuthController
+
+AuthController-> AuthController: Register()
+note right: function called when register button pressed
+
+AuthController -> AuthController: VerifyCredentialwithID()
+note right: sends a http request to ledger to get list of credentials
+
+alt valid Credential 
+
+AuthController-> AuthController:HandleQueryResult()
+activate AuthController
+AuthController-> AuthController:CheckIfDuplicateUserExists()
+activate AuthController
+
+note right: sends a http request to ledger to get a list of all usernames
+return
+
+alt alias does not exist
+AuthController-> AuthController:SendRegistrationRequest()
+activate AuthController
+
+AuthController-> AuthController:SQLAddNewUserDetail()
+activate AuthController
+
+return
+note right: changes Scene to Login Scene
+
+else alias exists
+return 
+
+
+note right: displayErrorText= "Username already exists! Please try a different username"
+end
+return
+
+else invalid Credential
+AuthController-> AuthController:popupWindow()
+note right: displayErrorText= "Failed to Verify Credential!"
+
+
+
+end 
+deactivate AuthController
+@enduml

@@ -1,0 +1,79 @@
+@startuml 
+hide footbox
+
+participant LoginController
+participant DockerStatusIcon
+
+
+
+activate LoginController
+
+LoginController-> LoginController: Login()
+note right: function run when login button pressed
+
+LoginController-> DockerStatusIcon:  
+activate DockerStatusIcon
+DockerStatusIcon--> LoginController: SQLServerConnection
+deactivate DockerStatusIcon
+
+alt SQLServerConnection is false
+
+LoginController-> LoginController: popupWindow()
+activate LoginController
+note right: windowMessage.text = "Not connected to SQL Server!"
+return
+
+
+
+else SQLServerConnection is true
+
+LoginController-> LoginController:HandleLoginQueryResult()
+activate LoginController
+LoginController-> LoginController:CheckIfUserExists()
+activate LoginController
+
+note right: sends a http request to ledger to get a list of all usernames
+return
+
+alt user exists
+LoginController-> LoginController:SendLoginRequest()
+activate LoginController
+
+LoginController-> LoginController:AuthenticateWithSQLServer()
+activate LoginController
+
+return isAuthenticated
+
+
+alt isAuthenticated is true
+LoginController-> LoginController:StartAcaPyInstanceAsync()
+activate LoginController
+note right: changes Scene to Main Scene
+return
+
+else isAuthenticated is false
+
+LoginController-> LoginController: popupWindow()
+activate LoginController
+note right: windowMessage.text = "Error logging in!"
+return
+
+end
+else user does not exist
+
+return 
+
+
+note right: displayErrorText= "Please register an account first!"
+end
+return
+end
+
+
+
+
+
+
+deactivate LoginController
+
+@enduml
