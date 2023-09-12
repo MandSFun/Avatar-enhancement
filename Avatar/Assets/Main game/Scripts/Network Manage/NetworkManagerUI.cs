@@ -77,7 +77,8 @@ public class NetworkManagerUI : NetworkBehaviour
             nameInputField.ActivateInputField();
         }
         else
-        {IPAddress = passwordInputField.text;
+        {
+            IPAddress = passwordInputField.text;
             SetIpAddress(IPAddress); 
             
             NetworkManager.Singleton.StartClient();

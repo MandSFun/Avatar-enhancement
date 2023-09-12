@@ -227,8 +227,9 @@ namespace StarterAssets
         }
 
         private void LateUpdate()
-        {
+        {if(IsOwner){
             CameraRotation();
+        }
         }
         public override void OnNetworkSpawn()
         {
@@ -546,7 +547,7 @@ namespace StarterAssets
                 if (FootstepAudioClips.Length > 0)
                 {
                     var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
+//                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
                 }
             }
         }

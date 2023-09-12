@@ -8,7 +8,7 @@ public class PlayerNameOverhead : NetworkBehaviour
 {
 
     [SerializeField]
-    private NetworkVariable<NetworkString> playerNetworkName = new NetworkVariable<NetworkString>();
+    private NetworkVariable<NetworkString> playerNetworkName = new NetworkVariable<NetworkString>("",NetworkVariableReadPermission.Everyone,NetworkVariableWritePermission.Owner);
     [SerializeField]
     private TextMeshProUGUI localPlayerOverlay;
     private bool overlaySet = false;
@@ -29,11 +29,12 @@ public class PlayerNameOverhead : NetworkBehaviour
 
     public void Update()
     {
-        if (!overlaySet && !string.IsNullOrEmpty(playerNetworkName.Value))
+        if (!overlaySet && !string.IsNullOrEmpty(playerNetworkName.Value) && IsOwner)
         {
             SetOverlay();
             overlaySet = true;
         }
+        else return;
     }
 }
 

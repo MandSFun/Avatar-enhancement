@@ -29,7 +29,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Shooting Game.unity
     guid: bc0fb3add49861945bbd7340e5f2954f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Main game/Chat system/Prefabs/Chat Manager.prefab
     guid: 19d25ff69992b4e4bbe65af72fe89a0b
   - enabled: 1
