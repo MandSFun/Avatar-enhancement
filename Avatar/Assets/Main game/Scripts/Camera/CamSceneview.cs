@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using StarterAssets;
 using Unity.Netcode;
+using System;
 
 public class CamSceneview : NetworkBehaviour
 {
@@ -29,10 +30,16 @@ public class CamSceneview : NetworkBehaviour
 
 
     public override void OnNetworkSpawn()
-    {
+    {try{
         if (!IsOwner) return;
         player = GameObject.FindGameObjectWithTag("Player");
         controller = player.GetComponent<ThirdPersonController>();
+    }
+    catch(Exception e){
+        Debug.Log(
+            "ok"
+        );
+    }
 
     }
     private void OnEnable()

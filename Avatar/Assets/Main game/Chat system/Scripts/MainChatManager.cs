@@ -6,6 +6,7 @@ using TMPro;
 using StarterAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System;
 
 
 public class MainChatManager : NetworkBehaviour
@@ -31,15 +32,17 @@ public class MainChatManager : NetworkBehaviour
 
     }
     public override void OnNetworkSpawn()
-    {
+    {try{
         base.OnNetworkSpawn();
         chatButton.gameObject.SetActive(true);
         player = GameObject.FindGameObjectWithTag("Player");
         interactingPlayerController = player.GetComponent<PlayerInput>();
         string message = "Player " + NetworkManager.Singleton.LocalClientId + " has joined.";
         SendChatMessageServerRpc(message, NetworkManager.Singleton.LocalClientId);
-        playerspawned = true;
-
+        playerspawned = true;}
+ catch(Exception e){
+            Debug.Log("hi22");
+        }
     }
     public override void OnNetworkDespawn()
     {

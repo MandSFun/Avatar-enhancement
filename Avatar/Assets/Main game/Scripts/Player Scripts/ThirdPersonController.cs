@@ -4,6 +4,8 @@ using Cinemachine;
 using StarterAssets;
 using TMPro;
 using UnityEngine.Animations.Rigging;
+using System;
+
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -173,7 +175,7 @@ namespace StarterAssets
         }
 
         private void Update()
-        {
+        {try{
             if (IsOwner)
             {
                 //hasAnim = TryGetComponent(out anim);
@@ -225,6 +227,10 @@ namespace StarterAssets
 
             }
         }
+        catch(Exception e){
+            
+        }
+        }
 
         private void LateUpdate()
         {if(IsOwner){
@@ -249,6 +255,7 @@ namespace StarterAssets
                     componentBase = ThirdPersonCam.GetCinemachineComponent(CinemachineCore.Stage.Body);
                     FirstPersonCam = GameObject.FindGameObjectWithTag("FirstPersonCamera").GetComponent<CinemachineVirtualCamera>();
                     FirstPersonCam.Follow = transform.GetChild(0).transform;
+                  
 
                 }
 
@@ -546,7 +553,7 @@ namespace StarterAssets
             {
                 if (FootstepAudioClips.Length > 0)
                 {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
+                   // var index = Random.Range(0, FootstepAudioClips.Length);
 //                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
                 }
             }

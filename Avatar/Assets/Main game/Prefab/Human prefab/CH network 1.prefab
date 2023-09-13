@@ -398,6 +398,7 @@ MonoBehaviour:
   RotationSpeed: 0.5
   RotationSmoothTime: 0.12
   SpeedChangeRate: 10
+  inventorySlots: {fileID: 0}
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
   FootstepAudioClips:
   - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
@@ -423,6 +424,7 @@ MonoBehaviour:
     m_Bits: 513
   bloodGush: {fileID: 1344468203239749039}
   bloodGushOrigin: {fileID: 1704896947622126650}
+  chatholder: {fileID: 0}
   maxCameraDistance: 4
   CinemachineCameraTarget: {fileID: 5264361039437825373}
   TopClamp: 70
@@ -465,8 +467,6 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
-  aim: 0
-  fps: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
@@ -592,8 +592,12 @@ MonoBehaviour:
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
   InLocalSpace: 0
   Interpolate: 1
+  SlerpPosition: 0
 --- !u!114 &-4696861780802418463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +612,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
 --- !u!114 &919378928254412238
@@ -623,12 +630,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TransitionStateInfoList:
-  - Layer: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
     OriginatingState: -1071854972
     DestinationState: 1177697483
     TransitionDuration: 0.25
     TriggerNameHash: 1177697483
     TransitionIndex: 3
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -1071854972
+    DestinationState: -1907200461
+    TransitionDuration: 0.25
+    TriggerNameHash: -1907200461
+    TransitionIndex: 4
   m_Animator: {fileID: 6508584596783856838}
 --- !u!114 &2677256835983870477
 MonoBehaviour:
@@ -649,18 +664,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 574454473996172294}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 149ce0d385099ad41b371c6bd136a1d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   modelPrefab: {fileID: 642287924342879162, guid: 268b6b02730701b45b0b84c6c0b13efd, type: 3}
-  spawnedModel: {fileID: 0}
   spawnPosition: {x: 0.18, y: -0.74, z: 4.41}
   layer:
     serializedVersion: 2
     m_Bits: 128
-  playerController: {fileID: 0}
+  spawned: 0
+  sceneviewCamera: {fileID: 0}
 --- !u!114 &3410185980023335502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,6 +689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionRange: 2
+  isAnimationPlaying: 0
   aimTrigger: {fileID: 0}
   pickingupPlaceholder: {fileID: 0}
   weaponPlaceholder: {fileID: 0}
@@ -681,11 +697,13 @@ MonoBehaviour:
   delayBeforeSpawn: 0
   rb: {fileID: 0}
   shoulder: {fileID: 0}
+  hasWeapon: 0
   lefthandIK: {fileID: 0}
   righthandIK: {fileID: 0}
   weaponPose: {fileID: 0}
-  weaponAiming: {fileID: 0}
-  rig: {fileID: 0}
+  TargetAiming: {fileID: 0}
+  rightclickAiming: {fileID: 0}
+  itemAK47: {fileID: 0}
 --- !u!114 &-8481338560089895310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +711,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 574454473996172294}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9365bd2c80e98584d9e39f7d8b9f29a9, type: 3}
   m_Name: 
@@ -1919,6 +1937,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7144015b6bf8d70458a13cfe6768d218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneviewCamera: {fileID: 0}
+  mainCamera: {fileID: 0}
+  thirdperson: {fileID: 0}
 --- !u!1 &4697324121619118332
 GameObject:
   m_ObjectHideFlags: 0
