@@ -9,11 +9,12 @@ using TMPro;
 using System.Net;
 using Unity.Netcode.Transports.UTP;
 using System.Net.Sockets;
+using System;
 
 public class NetworkManagerUI : NetworkBehaviour
 {
 
-    
+
     public static NetworkManagerUI instance;
 
     [SerializeField] private TMP_InputField passwordInputField;
@@ -38,11 +39,25 @@ public class NetworkManagerUI : NetworkBehaviour
     private void Awake()
     {
         instance = this;
+        try
+        {
+            // string hostName = Dns.GetHostName();
+            // IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+            // IPAddressInputField.text = AuthController.instance.IPAddress;
+            nameInputField.text =userdatapersist.Instance.verifiedUser;
+            Debug.Log(userdatapersist.Instance.verifiedUser + "Name");
+        }
+        catch (Exception ex)
+        {
+            string hostName = Dns.GetHostName();
+            IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+            //  IPAddressInputField.text = IPAddress;
+        }
     }
 
     private void Start()
     { //network = NetworkManager.Singleton;
-   
+
         NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnect;
     }
     private void Destroy()
@@ -56,7 +71,7 @@ public class NetworkManagerUI : NetworkBehaviour
         NetworkManager.Singleton.Shutdown();
         if (!IsServer) NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
 
-     SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Main");
 
     }
     public void Client()
@@ -71,19 +86,13 @@ public class NetworkManagerUI : NetworkBehaviour
 
         // byte[] payloadBytes = Encoding.ASCII.GetBytes(payload);
         // NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
-        if (nameInputField.text.Length < 4)
-        {
-            nameInputField.Select();
-            nameInputField.ActivateInputField();
-        }
-        else
-        {
-            IPAddress = passwordInputField.text;
-            SetIpAddress(IPAddress); 
-            
-            NetworkManager.Singleton.StartClient();
-            
-        }
+
+        IPAddress = passwordInputField.text;
+        SetIpAddress(IPAddress);
+
+        NetworkManager.Singleton.StartClient();
+
+
 
     }
     public void Host()
@@ -93,36 +102,28 @@ public class NetworkManagerUI : NetworkBehaviour
         //     clientData[NetworkManager.Singleton.LocalClientId] = new PlayerData(nameInputField.text);
 
         //    //NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-        if (nameInputField.text.Length < 4)
-        {
-            nameInputField.Select();
-            nameInputField.ActivateInputField();
-            //
 
+        localPlayerID = nameInputField.text.GetHashCode();
+        NetworkManager.Singleton.StartHost();
+        GetlocalIP();
 
-        }
-        else
-        {
-            localPlayerID = nameInputField.text.GetHashCode();
-            NetworkManager.Singleton.StartHost();
-            GetlocalIP();
-        }
         //setPassword(passwordInputField.text);
 
     }
-     private void GetlocalIP(){
-          string hostName = Dns.GetHostName();
-    IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
-    Debug.Log(IPAddress +" "+ hostName);
+    private void GetlocalIP()
+    {
+        string hostName = Dns.GetHostName();
+        IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+        Debug.Log(IPAddress + " " + hostName);
 
-     }
+    }
     public void SetIpAddress(string ipad)
     {
         transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
 
         transport.ConnectionData.Address = ipad;
     }
-    
+
     private void HandleClientDisconnect(ulong clientId)
     {
         // if (NetworkManager.Singleton.IsServer)
