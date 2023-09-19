@@ -540,8 +540,10 @@ public class LoginController : MonoBehaviour
     /// <returns></returns>
     public async void StartAcaPyInstanceAsync(Dictionary<string, string> arguments)
     {
-        string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
-        //string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
+        //string composeFilePath = "../../Assets/Main Scene Folder/Scripts/Wallet/";
+        string composeFilePath = "../../Avatar/Assets/Main Scene Folder/Scripts/Wallet/";
+        string partialPath ="Assets/Main Scene Folder/Scripts/Wallet/";
+        string fullPath = Path.Combine(Application.dataPath, partialPath);
         arguments.Add("ACAPY_ENDPOINT_PORT", "8001");
         arguments.Add("ACAPY_ADMIN_PORT", "11001");
         arguments.Add("CONTROLLER_PORT", "3001");
@@ -551,7 +553,7 @@ public class LoginController : MonoBehaviour
         // string[] additionalArgs = { $"--WALLET_KEY={arguments["WALLET_KEY"]}", $"--LABEL={arguments["WALLET_NAME"]}", $"--WALLET_NAME={arguments["WALLET_NAME"]}", $"--AGENT_WALLET_SEED={arguments["SEED"]}", $"--ACAPY_ENDPOINT_PORT={arguments["ACAPY_ENDPOINT_PORT"]}", $"--ACAPY_ADMIN_PORT={arguments["ACAPY_ADMIN_PORT"]}", $"--CONTROLLER_PORT={arguments["CONTROLLER_PORT"]}" };
 
         UnityEngine.Debug.Log("Starting ACA-PY instance now");
-        await RunDockerComposeAsync(composeFilePath, arguments);
+        await RunDockerComposeAsync(fullPath, arguments);
         UnityEngine.Debug.Log("Docker Compose completed.");
         // RunScriptInDirectory(directoryPath, scriptCommand, arguments);
     }
