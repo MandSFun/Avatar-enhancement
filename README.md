@@ -49,6 +49,9 @@ git clone https://github.com/MandSFun/Avatar-enhancement.git
 2. Clone into folder.
 3. Ensure that there is a folder called Build; This is folder you will Build and Run in.
 4. Open project, under File > Build Settings > Build and Run > Choose the "Build" folder directory.
+5. Select appropriate scenes to be built
+
+![build](https://github.com/LurkingGoo/Avatar-enhancement/assets/100992221/48fe5f33-c35f-4e70-aa12-bf69a8e40d28)
 
 
 ### Setting up of blockchain technology
