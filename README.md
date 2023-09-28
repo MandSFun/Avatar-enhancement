@@ -45,17 +45,12 @@ To clone this repository, use the following command:
 git clone https://github.com/MandSFun/Avatar-enhancement.git
 
 ```
-1. Create folder 'Avatar'
-2. Clone into folder
-3. Open project, under File > Build Settings > Build and Run
-4. Remember to delete these files under Avatar_Data before staging.
+1. Create folder 'Avatar'.
+2. Clone into folder.
+3. Ensure that there is a folder called Build; This is folder you will Build and Run in.
+4. Open project, under File > Build Settings > Build and Run > Choose the "Build" folder directory.
 
-``` 
-sharedassets0.resource
-sharedassets0.assets
-sharedassets0.assets.resS
 
-```
 ### Setting up of blockchain technology
 
 Refer to [Here](https://equinox-sawfish-01c.notion.site/How-to-set-up-Blockchain-ff080acd6d4f4bdb8453987feac23de9?pvs=4) 
