@@ -29,7 +29,7 @@ Special thanks to our advisors and mentors for their valuable guidance and suppo
 ## Installation
 
 **Refer to the Installation guide [here](https://quill-carriage-fc8.notion.site/Avatar-Project-Installation-Guide-6158f3a430fb4f3b88495f2bebacaef4?pvs=4) for specific step-by-step instructions.**
-
+**Refer to the documentation guide [here](https://equinox-sawfish-01c.notion.site/03b7c4c1c4db4030b03cb3264bd384b4?v=8474e109f1d54671b730f706de3fdfed&pvs=4)**
 
 To set up the framework and libraries for this project, follow these steps:
 
@@ -66,8 +66,6 @@ To export specific files from the project clone,ensure the project importing the
 "com.unity.cinemachine": "2.8.9",
 
 ```
-Unity does not include any [upm](https://openupm.com/) packages or any dependant packages. Thus you are required to manually import them.
-
 > To import the packages from **Package manager**
 1. Open package manager and select **Unity registry** under Packages.
 2. Search for the following:
@@ -140,6 +138,15 @@ For the time being, I shall key in major updates that are pushed. Each update wi
     - Auto trigger zones to shoot
 - Animation rigging
 
+### 29/9/23
+- Working blockchain authentication
+- Persistent local and online database
+- Addition of new features
+     - Messaging system
+     - Automated car waypoint system
+     - Different prefab spawn
+     - Racing game to test functionality
+
 ---
 
-*Note: This README.md file was last updated on 7/7/2023.*
+*Note: This README.md file was last updated on 29/9/2023.*
