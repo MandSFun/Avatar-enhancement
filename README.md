@@ -29,6 +29,7 @@ Special thanks to our advisors and mentors for their valuable guidance and suppo
 ## Installation
 
 **Refer to the Installation guide [here](https://quill-carriage-fc8.notion.site/Avatar-Project-Installation-Guide-6158f3a430fb4f3b88495f2bebacaef4?pvs=4) for specific step-by-step instructions.**
+
 **Refer to the documentation guide [here](https://equinox-sawfish-01c.notion.site/03b7c4c1c4db4030b03cb3264bd384b4?v=8474e109f1d54671b730f706de3fdfed&pvs=4)**
 
 To set up the framework and libraries for this project, follow these steps:
